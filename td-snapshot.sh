@@ -37,7 +37,7 @@ export PATH="/usr/bin:/usr/sbin"
 declare -a cmd=()
 declare t c s=""
 
-for c in dump rm tee btrfs mkdir mount umount realpath sha256sum cp; do
+for c in dump rm tee btrfs mkdir mount umount realpath sha256sum cp sync; do
 	t="$(type -Pf "$c")"
 	cmd+=("${t:-/bin/false}")
 	[[ "$c" != "sha256sum" ]] && s+="x${c^^} " || s+="xSHA "
@@ -391,6 +391,8 @@ _read_state() {
 		br="0000"
 	elif (( lev == 1 )); then
 		br="$(_rnd_alnum 4)."
+	else
+		br="${br}."
 	fi
 	echo -nE "${id}#${lev}#${b}#$br"
 }
@@ -464,6 +466,7 @@ _tar_backup() {
 
 	(( lev )) && _tee $xCP -v -- \
 		"${SNAPSHOT_FILE%.*}.$(( lev - 1 ))" "$SNAPSHOT_FILE"
+	_tee $xSYNC
 
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
 	f="${SFX}.${BRANCH_ID}lev${lev}.${d}.tar.xz"
@@ -830,11 +833,16 @@ readonly SNAPSHOT_FILE
 readonly BRANCH_ID
 
 # Do backup, verify it and update the state file with the new record
+if [[ -z "$BRANCH_ID" ]]; then
+	b_sf="0000"
+else
+	b_sf="${BRANCH_ID%\.}"
+fi
 echo -E "Starting ${backend^^} level $lev snapshot..."
 read -ra state_data <<< \
-   "$ID ${backend:0:1} $lev $UTC_TS ${BRANCH_ID:-"0000"} \
+   "$ID ${backend:0:1} $lev $UTC_TS $b_sf \
    $("_${backend}_backup" "$lev" "$rel_path")"
-/usr/bin/sync
+_tee $xSYNC
 
 b_sf="${STORAGE_DIR}/0/${state_data[-1]}"
 if [[ "${state_data[-2]}" == "$ID" ]]; then
@@ -855,7 +863,7 @@ else
 
 		# We need "$STATE_FILE" on the server because it provides a map
 		# for figuring out correct backup recovery path
-		/usr/bin/sync
+		_tee $xSYNC
 		read -r sha1 b_sf < <($xSHA "$STATE_FILE")
 		read -r sha2 b_sf < <($xSHA \
 		   "${STORAGE_DIR}/0/${STATE_FILE#$METADATA_DIR}" 2> /dev/null)
