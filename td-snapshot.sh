@@ -16,7 +16,7 @@ declare -r CYCLE_LENGTH=10
 # an implicit timing of the backups. For example, within a daily backup
 # routine, one can not have MAX_LEV >= CYCLE_LENGTH. Once MAX_LEV is reached,
 # we restart from level 1.
-declare -r MAX_LEV=1
+declare -r MAX_LEV=2
 
 # Number of cycles to keep. E.g. for a daily backup scheme with CYCLE_LENGTH=7,
 # this is the number of weeks worth of backups.
@@ -312,14 +312,16 @@ _initial_metadata_setup() {
 #		a new cycle will start at level 0);
 #	b = "tar" or "dump" backend used to take prev snapshot.
 _read_state() {
-	local id x s b
+	local id x b
 	local -i lev n
+	local -a a
 
 	echo -E "+++ Parsing the state file at \"${STATE_FILE}\"..." 1>&2
 	if [[ -f "$STATE_FILE" ]]; then
 		n=0
-		while read -r id b lev x s; do
+		while read -ra a; do
 			(( ++n ))
+			read -r id b lev x <<< "${a[@]:0:4}"
 		done < "$STATE_FILE"
 		if [[ "$b" == "t" ]]; then
 			b="tar"
@@ -417,7 +419,7 @@ _metadata_cleanup() {
 
 	# Purge old snapshot files
 	for f in "${METADATA_DIR}/"*; do
-		[[ ! -f "$f" ]] && continue
+		[[ (! -f "$f") || (! "$f" =~ -db-) ]] && continue
 		[[ ("$f" =~ "tar-db-${ID}."[0-9][0-9]*$) || \
 			("$f" =~ "dump-db-${ID}"$) ]] || _tee $xRM -v -- "$f"
 	done
@@ -433,13 +435,13 @@ _metadata_cleanup() {
 # Output: a shasum-formatted string:
 #	"sha256sum  backup_file_name"
 _tar_backup() {
-	local lev="$1" path="$2" d cs
+	local lev="$1" path="$2" d cs x
 
 	(( lev )) && _tee $xCP -v -- \
 		"${METADATA_DIR}/tar-db-${ID}.$(( lev - 1 ))" "$SNAPSHOT_FILE"
 
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
-	read -r cs < <(/usr/bin/tar --xattrs -jpc \
+	read -r cs x < <(/usr/bin/tar --xattrs -jpc \
 	      --listed-incremental="$SNAPSHOT_FILE" -f - -C "$path" . | \
 	      $xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.tar.bz2" | $xSHA -)
 
@@ -447,10 +449,11 @@ _tar_backup() {
 }
 
 _dump_backup() {
-	local lev="$1" path="$2" d cs
+	local lev="$1" path="$2" d cs x
 
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
-	read -r cs < <($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" |\
+	read -r cs x < \
+		<($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" |\
 	      $xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.dump.gz" | $xSHA -)
 
 	echo -nE "$cs ${SFX}.lev${lev}.${d}.dump.gz"
@@ -694,8 +697,8 @@ fi
 # Set up more global constants:
 #	UTC_TS = Timestamp of this backup
 # 	SFX = common unique suffix for dir names
-readonly UTC_TS="$(/usr/bin/date "+%s")" \
-	SFX="${UTC_TS}-$ID"
+readonly UTC_TS="$(/usr/bin/date "+%s")"
+readonly SFX="${UTC_TS}-$ID"
 
 # Print status
 echo -E "Timestamp / ID: $UTC_TS / $ID"
@@ -781,12 +784,20 @@ echo -E \
 "$STATE_FILE"
 echo -E "${backend^^} snapshot ready!"
 
-# Save the state file and snapshot data to the backup host
-_tee $xCP -v -- "$STATE_FILE" "$SNAPSHOT_FILE" "$STORAGE_DIR/0/"
-
 # Cleanup the snapshots, umount storage and delete mountpoints
 echo -E "!!! Cleanup !!!"
+echo ""
+
 "_${snap_type}_snapshot" "destroy" "$device" "$subvol_id"
+
+echo ""
+echo -E "Saving and cleaning up metadata..."
+_tee $xCP -v -- "$STATE_FILE" "$STORAGE_DIR/0/"
+if (( lev == MAX_LEV )); then
+	_tee $xRM -v -- "$SNAPSHOT_FILE"
+else
+	_tee $xCP -v -- "$SNAPSHOT_FILE" "$STORAGE_DIR/0/"
+fi
 
 echo ""
 echo -E "Unmounting storage..."
