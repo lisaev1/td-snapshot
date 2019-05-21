@@ -52,8 +52,9 @@ for c in $s; do
 done
 unset -v t s c cmd
 
-# Now use the set -e "protection"
+# Now use the errexit and pipefail "protection"
 set -o errexit
+set -o pipefail
 
 # Common mount-options
 declare -r MOUNTOPTS="noexec,nosuid,nodev"
@@ -463,11 +464,13 @@ _tar_backup() {
 		"${SNAPSHOT_FILE%.*}.$(( lev - 1 ))" "$SNAPSHOT_FILE"
 
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
-	read -r cs x < <(/usr/bin/tar --xattrs -jpc \
-	      --listed-incremental="$SNAPSHOT_FILE" -f - -C "$path" . | \
-	      $xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.tar.bz2" | $xSHA -)
-
-	echo -nE "$cs ${SFX}.lev${lev}.${d}.tar.bz2"
+	if x="$(/usr/bin/tar --xattrs -Jpc \
+		--listed-incremental="$SNAPSHOT_FILE" -f - -C "$path" . | \
+		$xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.tar.xz" | \
+		$xSHA -)"; then
+		IFS=" -" read -r cs <<< "$x"
+		echo -nE "$cs ${SFX}.lev${lev}.${d}.tar.xz"
+	fi
 }
 
 _dump_backup() {
@@ -484,11 +487,12 @@ _dump_backup() {
 	done <<< "$cs" > "$SNAPSHOT_FILE"
 
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
-	read -r cs x < \
-		<($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" |\
-	      $xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.dump.gz" | $xSHA -)
-
-	echo -nE "$cs ${SFX}.lev${lev}.${d}.dump.gz"
+	if x="$($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" | \
+		$xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.dump.gz" | \
+		$xSHA -)"; then
+		IFS=" -" read -r cs <<< "$x"
+		echo -nE "$cs ${SFX}.lev${lev}.${d}.dump.gz"
+	fi
 }
 
 #
