@@ -455,6 +455,16 @@ _tar_backup() {
 _dump_backup() {
 	local lev="$1" path="$2" d cs x
 
+	# dump doesn't like changing device names (e.g. lvm snapshots whose
+	# names contain timestamps). Therefore, we hack SNAPSHOT_FILE to
+	# replace old snapshot names with the current one.
+	x="(.*)[0-9]{"${#UTC_TS}"}--${ID}(.*)"
+	cs="$(< "$SNAPSHOT_FILE")"
+	while read -r d; do
+		[[ "$d" =~ $x ]] && \
+		      echo -E "${BASH_REMATCH[1]}${SFX/-/--}${BASH_REMATCH[2]}"
+	done <<< "$cs" > "$SNAPSHOT_FILE"
+
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
 	read -r cs x < \
 		<($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" |\
