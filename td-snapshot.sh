@@ -23,7 +23,8 @@ declare -r MAX_LEV=2
 declare -r MAX_CYCLES=8
 
 # NFS source for the backup storage
-declare -r STORAGE_NFS="taupo.colorado.edu:/export/backup"
+declare -r NFS_HOST="taupo.colorado.edu"
+declare -r STORAGE_NFS="${NFS_HOST}:/export/backup"
 
 # -----------------------------------------------------------------------------
 # Global constants
@@ -263,7 +264,7 @@ _none_snapshot() {
 
 	# If we are here, we want to ro mount the backup target
 	echo -E "+++ Mounting ro the backup target..." 1>&2
-	_tee $xMOUNT -v -o "ro,${MOUNTOPTS}" "$dev" "$SRC_MNT"
+	_tee $xMOUNT -v "$dev" "$SRC_MNT"
 	echo -E "--- Backup target is mounted at \"${SRC_MNT}\"" 1>&2
 
 	return 0
@@ -624,9 +625,13 @@ _initial_metadata_setup
 #	STORAGE_DIR = path to the actual backups (beneath $STORAGE_MNT)
 #	STATE_FILE = state file for this $backup_name
 b_sf="$(_rnd_alnum 15)"
-readonly SRC_MNT="/dev/shm/backup-$b_sf" \
+readonly SRC_MNT="/dev/shm/backup-$b_sf"
+if [[ "$HOSTNAME" == "$NFS_HOST" ]]; then
+	STORAGE_MNT="/export/backup"
+else
 	STORAGE_MNT="/dev/shm/storage-$b_sf"
-readonly STORAGE_DIR="${STORAGE_MNT}/${HOST}/$backup_name" \
+fi
+readonly STORAGE_MNT STORAGE_DIR="${STORAGE_MNT}/${HOST}/$backup_name" \
 	STATE_FILE="${METADATA_DIR}/${backup_name}.state"
 
 # Read the state file
@@ -638,7 +643,8 @@ _metadata_cleanup "$backup_name"
 
 # Create the mountpoints and mount the storage
 _tee $xMKDIR -v "$SRC_MNT" "$STORAGE_MNT"
-_tee $xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
+[[ "$HOSTNAME" != "$NFS_HOST" ]] && \
+	_tee $xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
 
 #
 # Backup logic
@@ -815,10 +821,14 @@ else
 	_tee $xCP -v -- "$SNAPSHOT_FILE" "$STORAGE_DIR/0/"
 fi
 
-echo ""
-echo -E "Unmounting storage..."
-_tee $xUMOUNT -v "$STORAGE_MNT"
+if [[ "$HOSTNAME" != "$NFS_HOST" ]]; then
+	echo ""
+	echo -E "Unmounting storage..."
+	_tee $xUMOUNT -v "$STORAGE_MNT"
+fi
 
 echo ""
 echo -E "Removing mountpoints..."
-_tee /usr/bin/rmdir -v "$SRC_MNT" "$STORAGE_MNT"
+_tee /usr/bin/rmdir -v "$SRC_MNT"
+[[ "$HOSTNAME" != "$NFS_HOST" ]] && _tee /usr/bin/rmdir -v "$STORAGE_MNT"
+	
