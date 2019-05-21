@@ -10,7 +10,7 @@ set -o nounset
 
 # Length of a cycle. For a traditional case when we do lev_0 backup on Monday
 # morning and lev_n (n >= 1) on each following day of the week, CYCLE_LENGTH=7.
-declare -r CYCLE_LENGTH=10
+declare -r CYCLE_LENGTH=9
 
 # Max level to achieve. This number must be commensurate with CYCLE_LENGTH and
 # an implicit timing of the backups. For example, within a daily backup
@@ -20,7 +20,7 @@ declare -r MAX_LEV=2
 
 # Number of cycles to keep. E.g. for a daily backup scheme with CYCLE_LENGTH=7,
 # this is the number of weeks worth of backups.
-declare -r MAX_CYCLES=8
+declare -r MAX_CYCLES=10
 
 # NFS source for the backup storage
 declare -r NFS_HOST="taupo.colorado.edu"
