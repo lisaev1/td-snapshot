@@ -5,6 +5,24 @@ set -o errexit
 #set -o xtrace
 
 # -----------------------------------------------------------------------------
+# Backup parameters
+# -----------------------------------------------------------------------------
+
+# Length of a cycle. For a traditional case when we do lev_0 backup on Monday
+# morning and lev_n (n >= 1) on each following day of the week, CYCLE_LENGTH=7.
+declare -r CYCLE_LENGTH=10
+
+# Max level to achieve. This number must be commensurate with CYCLE_LENGTH and
+# an implicit timing of the backups. For example, within a daily backup
+# routine, one can not have MAX_LEV >= CYCLE_LENGTH. Once MAX_LEV is reached,
+# we restart from level 1.
+declare -r MAX_LEV=1
+
+# Number of cycles to keep. E.g. for a daily backup scheme with CYCLE_LENGTH=7,
+# this is the number of weeks worth of backups.
+declare -r MAX_CYCLES=8
+
+# -----------------------------------------------------------------------------
 # Global constants
 # -----------------------------------------------------------------------------
 
@@ -26,7 +44,8 @@ readonly xTAR xDUMP xBTRFS xMOUNT xUMOUNT xMKDIR
 declare -r MOUNTOPTS="noexec,nosuid,nodev"
 
 # Meta data directory
-declare -r METADATA_DIR="/var/lib/backup"
+declare -r METADATA_DIR="/var/lib/td-backup"
+declare -r STATE_FILE="${METADATA_DIR}/state"
 
 # Info about mounted filesystems
 # See "filesystems/proc.txt" in kernel docs for the format spec
@@ -178,6 +197,7 @@ _btrfs_snapshot() {
 #	$2 = device
 _lvm_snapshot() {
 	local mode="$1" dev="$2" lv vg loop_img loop_dev snap_name x
+	local -r xLOSETUP="$(type -pf losetup)"
 
 	# Get LV and VG names for the device "$dev"
 	read -r lv vg < \
@@ -188,10 +208,10 @@ _lvm_snapshot() {
 	loop_img="/dev/shm/${snap_name}.img"
 	if [[ -f "$loop_img" ]]; then
 		IFS=":" read -r loop_dev x < \
-			<(/usr/sbin/losetup -j "$loop_img")
+			<($xLOSETUP -j "$loop_img")
 	else
 		_tee /usr/bin/dd if=/dev/zero of="$loop_img" bs=500M count=1
-		loop_dev="$(/usr/sbin/losetup --show -f "$loop_img")"
+		loop_dev="$($xLOSETUP --show -f "$loop_img")"
 	fi
 
 	# We are done and want to destroy the snapshot
@@ -201,7 +221,7 @@ _lvm_snapshot() {
 		_tee /usr/sbin/lvremove -v -y "${vg}/$snap_name"
 		_tee /usr/sbin/vgreduce -v -y "$vg" "$loop_dev"
 		_tee /usr/sbin/pvremove -v -y "$loop_dev"
-		_tee /usr/sbin/losetup -d "$loop_dev"
+		_tee $xLOSETUP -d "$loop_dev"
 		_tee /usr/bin/rm -vf "$loop_img"
 
 		echo -E "--- LVM snapshot destroyed"
@@ -277,6 +297,68 @@ _initial_setup() {
 
 	echo -E "--- initial setup done."
 	return 0
+}
+
+#
+# Determine state of the backup routine by reading "${METADATA_DIR}/state" if
+# present. The state file has a space/tab-separated (dump-like) format:
+# <ID> <level> <UTC timestamp> <human-readable date>
+# For example:
+# 2312f5635ef572c 0 1543961163 Tue Dec  4 22:06:03 UTC 2018
+# 2312f5635ef572c 1 1543981163 Wed Dec  5 03:39:23 UTC 2018
+# 2312f5635ef572c 2 1543981180 Wed Dec  5 03:39:40 UTC 2018
+# ...
+#
+# Output: A set of strings separated by "#":
+#	id = backup ID (either generated or read from the state file);
+#	lev = level of the backup to continue with (special value -1 means that
+#		a new cycle will start at level 0).
+_read_state() {
+	local id x
+	local -i lev n
+
+	echo -E "+++ Parsing the state file at \"${STATE_FILE}\"..." 1>&2
+	if [[ -f "$STATE_FILE" ]]; then
+		n=0
+		while read -r id lev x x; do
+			(( ++n ))
+		done < "$STATE_FILE"
+
+		echo -E "     Current cycle ID is \"${id}\". The last backup at level $lev was taken on ${x}." 1>&2
+
+		if (( n >= CYCLE_LENGTH )); then
+			# We need to start a new cycle. The special value
+			# lev = -1 indicates rotation of backups.
+			id="$(_rnd_alnum 15)"
+			(( lev = -1 ))
+
+			echo -E "     Present cycle ended -- starting a new one." 1>&2
+		elif (( lev >= MAX_LEV )); then
+			# We reached the max level and return back to level 1.
+			# The ID is the same as the last backup.
+			lev=1
+
+			echo -E "     Max level reached -- continuing the cycle with level 1" 1>&2
+		else
+			# Otherwise, just increment the last level value,
+			# keeping the same ID.
+			(( ++lev ))
+
+			echo -E "     Continuing this cycle with level ${lev} ." 1>&2
+		fi
+	else
+		# If the state file doesn't exist, we start fresh (lev is set
+		# to -1 to indicate rotation of backups that may exist, because
+		# such situation would be common when an OS is reinstalled and
+		# state files are lost but backups are present).
+		id="$(_rnd_alnum 15)"
+		(( lev = -1 ))
+
+		echo -E "     State file is missing. Starting a new cycle with ID = $id ." 1>&2
+	fi
+	echo -E "--- Finished reading state file." 1>&2
+
+	echo -nE "${id}#${lev}"
 }
 
 #
