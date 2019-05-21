@@ -22,6 +22,9 @@ declare -r MAX_LEV=1
 # this is the number of weeks worth of backups.
 declare -r MAX_CYCLES=8
 
+# NFS source for the backup storage
+declare -r STORAGE_NFS="taupo.colorado.edu:/export/backup"
+
 # -----------------------------------------------------------------------------
 # Global constants
 # -----------------------------------------------------------------------------
@@ -50,6 +53,9 @@ declare -r STATE_FILE="${METADATA_DIR}/state"
 # Info about mounted filesystems
 # See "filesystems/proc.txt" in kernel docs for the format spec
 declare -r MOUNTINFO="/proc/self/mountinfo"
+
+# Timestamp of this backup
+declare -r UTC_TS="$(/usr/bin/date "+%s")"
 
 # -----------------------------------------------------------------------------
 # Functions
@@ -274,11 +280,10 @@ _none_snapshot() {
 #
 # Initial setup (if called for the first time)
 #
-_initial_setup() {
+_initial_metadata_setup() {
 	local fs x
 
-	echo -E "+++ Creating metadata directory \"$METADATA_DIR\" and the mountpoint for"
-	echo -E "+++ backup source at \"$SRC_MNT\"..."
+	echo -E "+++ Creating metadata directory \"$METADATA_DIR\"..."
 	# Create the "$METADATA_DIR" if not present already. On a btrfs
 	# filesystem, we create a subvolume. Otherwise, a normal dir.
 	if [[ ! -d "$METADATA_DIR" ]]; then 
@@ -291,9 +296,6 @@ _initial_setup() {
 			$xMKDIR -v "$METADATA_DIR"
 		fi
 	fi
-
-	# Create the protected mountpoint for snapshots or ro mounts
-	$xMKDIR -v "$SRC_MNT"
 
 	echo -E "--- initial setup done."
 	return 0
@@ -460,17 +462,9 @@ _usage() {
 # Main program
 # -----------------------------------------------------------------------------
 
-# Unique ID and timestamp of this backup
-declare -r ID="$(_rnd_alnum 15)" \
-	UTC_TS="$(/usr/bin/date '+%s')"
-declare -r SFX="${UTC_TS}-$ID"
-
-# Mountpoint for the dir to be backed up
-declare -r SRC_MNT="/dev/shm/backup-$SFX"
-
-# This is just to keep track of variables
+# Declare veriables just to keep track of them
 declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
-	subvol_name
+	subvol_name lev ID SFX SRC_MNT STORAGE_MNT
 
 # Handle the arguments
 while getopts "t:p:h" arg; do
@@ -503,8 +497,38 @@ if [[ -z "$dir" ]]; then
 	exit 1
 fi
 
-# Do some initial checks and setup
-_initial_setup
+#
+# General preparations
+#
+
+# Do some initial checks and setup the metadata directory
+_initial_metadata_setup
+
+# Read the state file
+IFS="#" read -r ID lev <<< "$(_read_state)"
+
+# Set up more global constants:
+# 	SFX = common unique suffix for dir names
+#	SRC_MNT = mountpoint for the dir to be backed up
+#	STORAGE_MNT = mountpoint for the backup storage
+SFX="${UTC_TS}-$ID"
+SRC_MNT="/dev/shm/backup-$SFX"
+STORAGE_MNT="/dev/shm/storage-$SFX"
+readonly ID SFX SRC_MNT STORAGE_MNT
+
+# Create the mountpoints and mount the storage
+$xMKDIR -v "$SRC_MNT" "$STORAGE_MNT"
+$xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
+
+#
+# Backup logic
+#
+
+
+
+#
+# Snapshotting logic
+#
 
 # Determine attributes of "$dir"
 mnt_point="$(_closest_mountpoint "$dir")"
