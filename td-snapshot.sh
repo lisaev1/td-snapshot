@@ -22,9 +22,6 @@ declare -r xTAR="$(type -pf tar)" \
 # Common mount-options
 declare -r MOUNTOPTS="noexec,nosuid,nodev"
 
-# Debug: 0 - silent; > 0 - be verbose
-declare -r DEBUG=1
-
 # Mountpoint for the dir to be backed up
 declare -r SRC_MNT="/dev/shm/backup-$SFX"
 
@@ -121,8 +118,10 @@ _btrfs_snapshot() {
 	local dev="$1" subvolid="$2" name
 	local -r snap_dir="_${SALT}_backup_snapshots"
 
+	echo -E "+++ Making and mounting btrfs snapshot..." 1>&2
+
 	# Mount the entire BTRFS device "$dev"
-	$xMOUNT -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT"
+	$xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT" 1>&2
 
 	# For our subvolid (!= 5), find the corresponding name. The
 	# subvolid = 5 does not show up in the list and "$name" is unset.
@@ -131,18 +130,20 @@ _btrfs_snapshot() {
 
 	# If necessary, make a subvolume for future snapshots
 	[[ ! -d "${SRC_MNT}/$snap_dir" ]] && \
-		$xBTRFS subvolume create "${SRC_MNT}/$snap_dir" 1> /dev/null
+		$xBTRFS subvolume create "${SRC_MNT}/$snap_dir" 1>&2
 
 	# Snapshot our parent subvolume and mount it ro
 	subvolid="backup-snapshot-${name:-"id5"}-$SFX"
 	$xBTRFS subvolume snapshot -r "${SRC_MNT}/$name" \
-		"${SRC_MNT}/${snap_dir}/$subvolid" 1> /dev/null
+		"${SRC_MNT}/${snap_dir}/$subvolid" 1>&2
 
 	# Mount the snapshot (by its ID)
 	subvolid="$(_btrfs_idname "id" "$subvolid" "$SRC_MNT")"
-	$xUMOUNT "$SRC_MNT"
-	$xMOUNT -o "ro,${MOUNTOPTS},subvolid=$subvolid" "$dev" "$SRC_MNT"
+	$xUMOUNT -v "$SRC_MNT" 1>&2
+	$xMOUNT -v -o "ro,${MOUNTOPTS},subvolid=$subvolid" "$dev" \
+		"$SRC_MNT" 1>&2
 
+	echo -E "--- snapshot ID $subvolid mounted at $SRC_MNT" 1>&2
 	echo -nE "$name"
 }
 
@@ -339,35 +340,21 @@ else
 fi
 
 # Print status
-if (( DEBUG )); then
-	echo -E "Timestamp: $UTC_TS"
-	echo -E "ID: $ID"
-	echo -E "Backup target: \"${dir}\""
-	[[ "$subvol_id" != "0" ]] && echo -E "Parent subvolume ID: $subvol_id"
-	echo -E "Closest mountpoint: \"${mnt_point}\""
-	echo -E "Path within parent device: \"${rel_path}\""
-	echo -E "Device: $device"
-	echo -E "Snapshots: $snap_type"
-	echo ""
-fi
-exit 0
+echo -E "Timestamp: $UTC_TS"
+echo -E "ID: $ID"
+echo -E "Backup target: \"${dir}\""
+[[ "$subvol_id" != "0" ]] && echo -E "Parent subvolume ID: $subvol_id"
+echo -E "Closest mountpoint: \"${mnt_point}\""
+echo -E "Path within parent device: \"${rel_path}\""
+echo -E "Device: $device"
+echo -E "Snapshots: $snap_type"
+echo ""
 
 # Create a shapshot
-if (( DEBUG )); then
-	[[ "$snap_type" != "none" ]] && \
-		echo -E "+++ Making and mounting $snap_type snapshot..."
-fi
-
 subvol_name="$("_${snap_type}_snapshot" "$device" "$subvol_id")"
 if [[ -n "$subvol_name" ]]; then
 	rel_path="${SRC_MNT}/${rel_path#/${subvol_name}/}"
 else
 	rel_path="${SRC_MNT}/${rel_path#/}"
 fi
-rel_path="${rel_path}/${dir#${mnt_point}/}"
-
-if (( DEBUG )); then
-	[[ "$snap_type" != "none" ]] && \
-		echo -E "--- snapshot $subvol_name mounted at $SRC_MNT"
-	echo ""
-fi
+rel_path="${rel_path}/${dir#${mnt_point}}"
