@@ -46,7 +46,7 @@ Of course, `dump` only works on ext[2-4], so to handle data on btrfs we use [tar
 
 The snapshotting strategy is also quite simple: If the source dir is on btrfs, the program finds which subvolume it is on (the top-level subvol, id = 5, is also a correct answer in this case) and makes its read-only snapshot. If the underlying filesystem is not btrfs, then we check if it resides on top of a LVM volume, and use lvm snapshotting capabilities (by creating a loopback device on tmpfs and extending volume group on it) if yes. Finally, if we have a directory on a simple partition, no snapshots are done.
 
-On the first run, td-s creates a metadata directory in `/var/lib/td-backup` that contains information about last dump. This is also handy when the host `/` filesystem is readonly, because `dump` by default would try to write to `/etc/dumpdates`.
+On the first run, td-s creates a metadata directory in `/var/lib/td-backup` that contains information about last dump. This is also handy when the host `/` filesystem is readonly, because `dump` by default tries to write timestamps of previous dumps to `/etc/dumpdates`.
 
 ## License
 
