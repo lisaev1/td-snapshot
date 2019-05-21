@@ -29,15 +29,11 @@ declare -r STORAGE_NFS="taupo.colorado.edu:/export/backup"
 # Global constants
 # -----------------------------------------------------------------------------
 
-# Quasi-random salt
-declare -r SALT="$(< /etc/machine-id)"
-
 # Frequently used commands
-declare xTAR="$(type -pf tar)" xDUMP="$(type -pf dump)" \
-	xBTRFS="$(type -pf btrfs)", xRM="/usr/bin/rm" \
+declare -r xDUMP="$(type -pf dump)" xRM="/usr/bin/rm" xTEE="$(type -pf tee)" \
+	xBTRFS="$(type -pf btrfs)" xMKDIR="$(type -pf mkdir)" \
 	xMOUNT="$(type -pf mount)" xUMOUNT="$(type -pf umount)" \
-	xMKDIR="$(type -pf mkdir)"
-readonly xTAR xDUMP xBTRFS xMOUNT xUMOUNT xMKDIR
+	xREALPATH="$(type -pf realpath)" xSHA="$(type -pf sha256sum)"
 
 # Common mount-options
 declare -r MOUNTOPTS="noexec,nosuid,nodev"
@@ -138,7 +134,7 @@ _btrfs_idname() {
 # Return: ID of the snapshot
 _btrfs_snapshot() {
 	local mode="$1" dev="$2" subvolid="$3" snap_name name snap_id
-	local -r snap_dir="_${SALT}_backup_snapshots"
+	local -r snap_dir="_$(< /etc/machine-id)_backup_snapshots"
 
 	if [[ "x$mode" == "xcreate" ]]; then
 		# We want to create the snapshot
@@ -380,10 +376,13 @@ _read_state() {
 # /storage
 # |
 # |-- host1/
-# |   |-- 0/
-# |   |-- 1/
+# |   |-- backup_name_1/
+# |   |   |-- 0/
+# |   |   |-- 1/
+# |   |   ...
+# |   |   `-- MAX_CYCLES/
+# |   |-- backup_name_2/
 # |   ...
-# |   `-- MAX_CYCLES/
 # |-- host2/
 # ...
 #
@@ -393,25 +392,24 @@ _rotate_backups() {
 
 	echo -E "+++ Rotating backups..."
 
-	d="${STORAGE_MNT}/${HOST}/$MAX_CYCLES"
+	d="${STORAGE_DIR}/$MAX_CYCLES"
 	if [[ -d "$d" ]]; then
 		echo -E "... Removing backup with number $MAX_CYCLES (= max)"
 		_tee $xRM -vr -- "$d"
 	fi
 
-	d="${STORAGE_MNT}/${HOST}"
 	for (( i = MAX_CYCLES - 1; i >= 0; --i )); do
-		x="${d}/$i"
+		x="${STORAGE_DIR}/$i"
 		[[ -d "$x" ]] && \
-			_tee /usr/bin/mv -v -- "$x" "${d}/$(( i + 1 ))"
+		      _tee /usr/bin/mv -v -- "$x" "${STORAGE_DIR}/$(( i + 1 ))"
 	done
-	_tee $xMKDIR -v "${d}/0"
+	_tee $xMKDIR -v "${STORAGE_DIR}/0"
 
 	echo -E "--- Backup rotation done."
 }
 
 #
-# Clean up the metadata directory.
+# Clean up the metadata directory
 #
 _metadata_cleanup() {
 	local f
@@ -426,11 +424,25 @@ _metadata_cleanup() {
 }
 
 #
-# Incremental backup function using TAR.
+# Incremental backup function using TAR
 #
-#_tar_backup() {
-#	local lev="$1" path="$2"
-#}
+# Input: $1 = level of this backup
+#	$2 = path to compress ($rel_path)
+# Output: a shasum-formatted string:
+#	"sha256sum  backup_file_name"
+_tar_backup() {
+	local lev="$1" path="$2" d cs
+
+	(( lev )) && _tee /usr/bin/cp -v -- \
+		"${METADATA_DIR}/tar-db-${ID}.$(( lev - 1 ))" "$SNAPSHOT_FILE"
+
+	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
+	read -r cs < <(/usr/bin/tar --xattrs -jpc \
+	      --listed-incremental="$SNAPSHOT_FILE" -f - -C "$path" . | \
+	      $xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.tar.bz2" | $xSHA -)
+
+	echo -nE "$cs  ${SFX}.lev${lev}.${d}.tar.bz2"
+}
 
 #
 # Incremental backup function using DUMP.
@@ -444,14 +456,14 @@ _metadata_cleanup() {
 # Avoid common cases when the dir name starts with "-", etc.
 #
 # Input: $1 = filename to sanitize
-# Return: filename with prepended "./"
+# Return: canonicalized filename with prepended full directory path
 _sanitize_filename() {
         local f="$1"
 
 	f="${f%/}"
 	[[ "x${f#-}" == "x$f" ]] || f="./$f"
 	[[ "x${f##*/}" == "x$f" ]] && f="./$f"
-	echo -nE "$(/usr/bin/realpath "$f")"
+	echo -nE "$($xREALPATH "$f")"
 }
 
 #
@@ -525,11 +537,13 @@ _tee() {
 
 _usage() {
 	echo ""
-	echo "Usage: td-snapshot.sh [-t tar|dump] -p <path>"
+	echo "Usage: td-snapshot.sh [-t tar|dump] -p <path> -n <name>"
 	echo "-t <backend> : use tar(1) or dump(1) for incremental backups"
 	echo "               if dump(1) is installed, use it for ext{2,3,4}"
 	echo "               filesystems. Otherwise, use tar(1)."
 	echo "-p <path>    : /path/to/data to backup"
+	echo "-n <name>    : mnemonic name of the backup, e.g. \"home\". It is"
+	echo "               used to name a dir with incremental backups."
 
 	return 0
 }
@@ -540,11 +554,12 @@ _usage() {
 
 # Declare veriables just to keep track of them
 declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
-	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf SNAPSHOT_FILE
+	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf SNAPSHOT_FILE backup_name \
+	STORAGE_DIR
 declare -i lev
 
 # Handle the arguments
-while getopts "t:p:h" arg; do
+while getopts "t:p:n:h" arg; do
 	case $arg in
 		t ) # quit if not "tar" or "dump"
 		    if [[ "$OPTARG"  == "tar" || "$OPTARG" == "dump" ]]; then
@@ -558,6 +573,9 @@ while getopts "t:p:h" arg; do
 		p ) # sanitize the path
 		    dir="$(_sanitize_filename "$OPTARG")"
 		    _check_dir "$dir" || exit 1
+		;;
+		n ) # name can't contain "/", so we replace them with "+"
+		    backup_name="${OPTARG//\//+}"
 		;;
 		h | * ) # print usage and exit
 			_usage
@@ -573,6 +591,13 @@ if [[ -z "$dir" ]]; then
 	exit 1
 fi
 
+# If no "-n" option was supplied, use "$dir" as the backup name (replacing "/"
+# with "+")... 
+if [[ -z "$backup_name" ]]; then
+	backup_name="$($xREALPATH "$dir")"
+	backup_name="${backup_name//\//+}"
+fi
+
 #
 # General preparations
 #
@@ -583,9 +608,11 @@ _initial_metadata_setup
 # Set up more global constants:
 #	SRC_MNT = mountpoint for the dir to be backed up
 #	STORAGE_MNT = mountpoint for the backup storage
+#	STORAGE_DIR = path to the actual backups (beneath $STORAGE_MNT)
 lev="$(_rnd_alnum 15)"
 readonly SRC_MNT="/dev/shm/backup-$lev" \
 	STORAGE_MNT="/dev/shm/storage-$lev"
+readonly STORAGE_DIR="${STORAGE_MNT}/${HOST}/$backup_name"
 
 # Read the state file
 IFS="#" read -r ID lev b_sf <<< "$(_read_state)"
@@ -605,22 +632,23 @@ _tee $xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
 # If the storage is fresh and we don't have the proper dir tree, we create the
 # directory for the current cycle. Otherwise, we check if "$lev" == -1 and
 # unconditionally rotate backups if yes.
-if [[ ! -d "${STORAGE_MNT}/${HOST}/0" ]]; then
+if [[ ! -d "${STORAGE_DIR}/0" ]]; then
 	if [[ -f "$STATE_FILE" ]]; then
 		echo -E "!!! Warning !!!"
 		echo -E "State file exists, but not the backup directory tree."
 		echo -E "Assuming that previous backups are lost. Reverting to"
 		echo -E "level 0 dump and removing state file."
 		_tee $xRM -v -- "$STATE_FILE"
+		b_sf=""
 	fi
-	_tee $xMKDIR -vp "${STORAGE_MNT}/${HOST}/0"
+	_tee $xMKDIR -vp "${STORAGE_DIR}/0"
 	lev=0
 else
 	# Level -1 occurs if there were no state file (fresh start) or a new
 	# cycle started. In both cases, we set lev to 0 and remove state file.
 	if (( lev == -1 )); then
 		_rotate_backups
-		_tee $xRM -v -- "$STATE_FILE"
+		[[ -f "$STATE_FILE" ]] && _tee $xRM -v -- "$STATE_FILE"
 		lev=0
 	fi
 fi
@@ -692,7 +720,7 @@ rel_path="${rel_path}/${dir#${mnt_point}}"
 # filesystem is ext2/3/4, and (3) dump is installed. If these conditions are
 # met, dump is the default backend. Otherwise, we use tar.
 if [[ -z "$b_sf" ]]; then
-	if [[ ("$(/usr/bin/realpath "$rel_path")" == "$SRC_MNT") && \
+	if [[ ("$($xREALPATH "$rel_path")" == "$SRC_MNT") && \
 		("$filesystem" =~ ^ext[2-4]$) && (-n "$xDUMP") ]]; then
 		: "${backend:="dump"}"
 	else
@@ -709,7 +737,7 @@ echo -E "Using the $backend backend..."
 #
 # When (( lev != 0 )), we need to check if the tar or dump states used in
 # building an incremental snapshot are present
-if (( lev )); then
+if (( lev > 0 )); then
 	echo ""
 	echo -E "Checking presence of the previous $backend snapshot file..."
 
@@ -727,12 +755,14 @@ fi
 
 # Specify the tar or dump snapshot filename (for dump, aka dumpdates) 
 SNAPSHOT_FILE="${METADATA_DIR}/${backend}-db-$ID"
-if [[ "$backend" == tar ]]; then
+if [[ "$backend" == "tar" ]]; then
 	SNAPSHOT_FILE="${SNAPSHOT_FILE}.$lev"
 	if [[ -f "$SNAPSHOT_FILE" ]]; then
 		echo -E "!!! Warning !!!"
-		echo -E "Found stale lev $lev snapshot file \"${SNAPSHOT_FILE}\", removing..."
+		echo -E "Found stale lev $lev tar snapshot file \"${SNAPSHOT_FILE}\", removing..."
 		_tee $xRM -v -- "$SNAPSHOT_FILE"
 fi
 readonly SNAPSHOT_FILE
 
+# Do the backup
+"_${backend}_backup" "$lev" "$rel_path"
