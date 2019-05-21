@@ -414,14 +414,17 @@ _rotate_backups() {
 #
 # Clean up the metadata directory
 #
+# Input: $1 = backup name
 _metadata_cleanup() {
-	local f
+	local name="$1" f r
 
 	# Purge old snapshot files
 	for f in "${METADATA_DIR}/"*; do
 		[[ (! -f "$f") || (! "$f" =~ -db-) ]] && continue
-		[[ ("$f" =~ tar-db-.*-${ID}\.[0-9][0-9]*$) || \
-			("$f" =~ dump-db-.*-${ID}$) ]] || _tee $xRM -v -- "$f"
+
+		r="-db-${backup_name}-"
+		[[ ("$f" =~ $r) && (! "$f" =~ ${r}$ID) ]] && \
+			_tee $xRM -v -- "$f"
 	done
 
 	return 0
@@ -630,7 +633,7 @@ IFS="#" read -r ID lev b_sf <<< "$(_read_state)"
 readonly ID
 
 # Clean up old snapshot files that won't be used
-#_metadata_cleanup "$backup_name"
+_metadata_cleanup "$backup_name"
 
 # Create the mountpoints and mount the storage
 _tee $xMKDIR -v "$SRC_MNT" "$STORAGE_MNT"
