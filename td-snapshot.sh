@@ -277,7 +277,7 @@ IFS="#" read -r filesystem device rel_path subvol_id <<< \
 
 # Next we proceed as follows:
 # * if "$dir" is on a btrfs subvolume (or is a mountpoint for a subvolume,
-#   remeber that the root btrfs FS is also a subvolume with ID = 5), we will
+#   remember that the root btrfs FS is also a subvolume with ID = 5), we will
 #   use btrfs native snapshotting capabilities;
 # * if "$dir" is not on btrfs, we check whether it belongs to (or is a
 #   mountpoint for) a logical volume and, if yes, use LVM snapshots. Otherwise
