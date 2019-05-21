@@ -607,7 +607,7 @@ _usage() {
 # Declare veriables just to keep track of them
 declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
 	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf SNAPSHOT_FILE backup_name \
-	STORAGE_DIR STATE_FILE
+	STORAGE_DIR STATE_FILE sha1 sha2
 declare -i lev
 declare -a state_data
 
@@ -844,7 +844,19 @@ else
 
 		# Save the state file and snapshot data to the backup host
 		_tee $xCP -v -- "$STATE_FILE" "$SNAPSHOT_FILE" \
-			"$STORAGE_DIR/0/"
+			"${STORAGE_DIR}/0/"
+
+		# We need "$STATE_FILE" on the server because it provides a map
+		# for figuring out correct backup recovery path
+		/usr/bin/sync
+		read -r sha1 b_sf < <($xSHA "$STATE_FILE")
+		read -r sha2 b_sf < <($xSHA \
+		   "${STORAGE_DIR}/0/${STATE_FILE#$METADATA_DIR}" 2> /dev/null)
+		if [[ "x$sha1" != "x$sha2" ]]; then
+			echo -E "!!! Warning !!!"
+			echo -E "State file \"${STATE_FILE#${METADATA_DIR}/}\" could not be copied to \"${STORAGE_DIR}/0\"!"
+			echo -E "Consult \"${STATE_FILE}\" for archive checksums."
+		fi
 	else
 		echo -E "VERIFICATION FAILED!!!"
 		echo -E "Removing archive and aborting..."
