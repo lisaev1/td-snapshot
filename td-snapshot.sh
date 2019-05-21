@@ -773,7 +773,7 @@ rel_path="${rel_path}/${dir#${mnt_point}}"
 # met, dump is the default backend. Otherwise, we use tar.
 if [[ -z "$b_sf" ]]; then
 	if [[ ("$($xREALPATH "$rel_path")" == "$SRC_MNT") && \
-		("$filesystem" =~ ^ext[2-4]$) && (-n "$xDUMP") ]]; then
+	  ("$filesystem" =~ ^ext[2-4]$) && ("$xDUMP" != "/bin/false") ]]; then
 		: "${backend:="dump"}"
 	else
 		backend="tar"
