@@ -25,11 +25,6 @@ declare -r MOUNTOPTS="noexec,nosuid,nodev"
 # Debug: 0 - silent; > 0 - be verbose
 declare -r DEBUG=1
 
-# Unique ID and timestamp of this backup
-declare -r ID="$(/usr/bin/cat /dev/urandom | /usr/bin/tr -cd '[:alnum:]' | /usr/bin/head -c 10)" \
-	UTC_TS="$(/usr/bin/date '+%s')" \
-	SFX="${utc_ts}-$id"
-
 # Mountpoint for the dir to be backed up
 declare -r SRC_MNT="/dev/shm/backup-$SFX"
 
@@ -239,6 +234,30 @@ _closest_mountpoint() {
 	echo -nE "$fs"
 }
 
+#
+# Generate a random lower-case alpha-numeric string of a given length.
+#
+# Input: $1 = length
+# Return: random string
+_rnd_alnum() {
+	local -i l="$1"
+	local s="$(printf "%x" $RANDOM)"
+
+	(( l <= 0 )) && return 1
+
+	while (( ${#s} < l )); do
+        	s="$(printf "%x" $RANDOM)$s"
+	done
+
+	l=$(( ${#s} - l ))
+	while (( l )); do
+        	s="${s%[0-9a-f]}"
+        	(( --l ))
+	done
+
+	echo -nE "$s"
+}
+
 _usage() {
 	echo ""
 	echo "Usage: td-snapshot.sh [-t tar|dump] -p <path>"
@@ -253,6 +272,11 @@ _usage() {
 # -----------------------------------------------------------------------------
 # Main program
 # -----------------------------------------------------------------------------
+
+# Unique ID and timestamp of this backup
+declare -r ID="$(_rnd_alnum 15)" \
+	UTC_TS="$(/usr/bin/date '+%s')" \
+	SFX="${utc_ts}-$id"
 
 # This is just to keep track of variables
 declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
