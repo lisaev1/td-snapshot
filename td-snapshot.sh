@@ -11,19 +11,20 @@ set -o errexit
 # Quasi-random salt
 declare -r SALT="$(< /etc/machine-id)"
 
-# Frequently used commands
-declare -r xTAR="$(type -pf tar)" \
-	xDUMP="$(type -pf dump)" \
-	xBTRFS="$(type -pf btrfs)" \
-	xMKDIR="$(type -pf mkdir)" \
-	xMOUNT="$(type -pf mount)" \
-	xUMOUNT="$(type -pf umount)"
+# Frequently used commands... ALl systems are expected to have tar, mount,
+# umount and mkdir, but not necessarily btrfs, dump or lvs. If they are not
+# present, we replace them with /bin/false to fail subsequent checks.
+declare xTAR="$(type -pf tar)" xDUMP="$(type -pf dump)" \
+	xBTRFS="$(type -pf btrfs)" xLVS="$(type -pf lvs)" \
+	xMOUNT="$(type -pf mount)" xUMOUNT="$(type -pf umount)" \
+	xMKDIR="$(type -pf mkdir)"
+: "${xDUMP:=/bin/false}"
+: "${xBTRFS:=/bin/false}"
+: "${xLVS:=/bin/false}"
+readonly xTAR xDUMP xBTRFS xLVS xMOUNT xUMOUNT xMKDIR
 
 # Common mount-options
 declare -r MOUNTOPTS="noexec,nosuid,nodev"
-
-# Mountpoint for the dir to be backed up
-declare -r SRC_MNT="/dev/shm/backup-$SFX"
 
 # Meta data directory
 declare -r METADATA_DIR="/var/lib/backup"
@@ -155,8 +156,17 @@ _btrfs_snapshot() {
 # - turn it into a PV, and extend the proper VG over it;
 # - make a snapshot of the proper LV.
 #
-# Input: 
+# Input: $1 = device
 _lvm_snapshot() {
+	local dev="$1" lv vg
+
+	# Get LV and VG names for the device "$dev"
+	read -r lv vg < \
+		<($xLVS --noheadings -o lvname,vgname "$device")
+
+	# 
+
+	echo -nE "$lv"
 }
 
 #
@@ -165,6 +175,8 @@ _lvm_snapshot() {
 _initial_setup() {
 	local fs x
 
+	echo -E "+++ Creating metadata directory \"$METADATA_DIR\" and the"
+	echo -E "+++ mountpoint for backup source at \"$SRC_MNT\"..."
 	# Create the "$METADATA_DIR" if not present already. On a btrfs
 	# filesystem, we create a subvolume. Otherwise, a normal dir.
 	if [[ ! -d "$METADATA_DIR" ]]; then 
@@ -174,13 +186,14 @@ _initial_setup() {
 		if [[ "$fs" == "btrfs" ]]; then
 			$xBTRFS subvolume create "$METADATA_DIR"
 		else
-			$xMKDIR "$METADATA_DIR"
+			$xMKDIR -v "$METADATA_DIR"
 		fi
 	fi
 
 	# Create the protected mountpoint for snapshots or ro mounts
-	$xMKDIR "$SRC_MNT"
+	$xMKDIR -v "$SRC_MNT"
 
+	echo -E "--- initial setup done."
 	return 0
 }
 
@@ -279,6 +292,9 @@ declare -r ID="$(_rnd_alnum 15)" \
 	UTC_TS="$(/usr/bin/date '+%s')" \
 	SFX="${utc_ts}-$id"
 
+# Mountpoint for the dir to be backed up
+declare -r SRC_MNT="/dev/shm/backup-$SFX"
+
 # This is just to keep track of variables
 declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
 	subvol_name
@@ -315,7 +331,7 @@ if [[ -z "$dir" ]]; then
 fi
 
 # Do some initial checks and setup
-#_initial_setup
+_initial_setup
 
 # Determine attributes of "$dir"
 mnt_point="$(_closest_mountpoint "$dir")"
@@ -329,11 +345,9 @@ IFS="#" read -r filesystem device rel_path subvol_id <<< \
 # * if "$dir" is not on btrfs, we check whether it belongs to (or is a
 #   mountpoint for) a logical volume and, if yes, use LVM snapshots. Otherwise
 #   (if we have a basic device), no snapshotting will be done.
-# Note: if lvs(8) is not found, then LVM is not installed and we can't do
-# snapshots. Therefore, we treat this situation as if the device is raw.
 if [[ "$filesystem" == "btrfs" ]]; then
 	snap_type="btrfs"
-elif /usr/bin/lvs "$device" &> /dev/null; then
+elif $xLVS "$device" &> /dev/null; then
 	snap_type="lvm"
 else
 	snap_type="none"
