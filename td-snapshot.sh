@@ -15,7 +15,6 @@ declare -r SALT="$(< /etc/machine-id)"
 declare -r xTAR="$(type -pf tar)" \
 	xDUMP="$(type -pf dump)" \
 	xBTRFS="$(type -pf btrfs)" \
-	xSTAT="$(type -pf stat)" \
 	xMKDIR="$(type -pf mkdir)" \
 	xMOUNT="$(type -pf mount)" \
 	xUMOUNT="$(type -pf umount)"
@@ -174,7 +173,7 @@ _initial_setup() {
 	# filesystem, we create a subvolume. Otherwise, a normal dir.
 	if [[ ! -d "$METADATA_DIR" ]]; then 
 		IFS="#" read -r fs x <<< \
-			"$(_mnt2info "$($xSTAT --printf=%m /var/lib)")"
+			"$(_mnt2info "$(_closest_mountpoint /var/lib)")"
 
 		if [[ "$fs" == "btrfs" ]]; then
 			$xBTRFS subvolume create "$METADATA_DIR"
@@ -215,6 +214,29 @@ _check_dir() {
 		echo "Does it exist and have proper permissions?"
                 return 1
         fi
+}
+
+#
+# Find the closest mountpoint for a directory, emulating stat --printf=%m. The
+# latter has an issue with btrfs subvolumes, as it returns the closest
+# subvolume even if the actual mountpoint is higher up the tree.
+#
+# Input: $1 = directory
+# Return: mountpoint path
+_closest_mountpoint() {
+	local fs="$1"
+
+	while :; do
+        	/usr/bin/mountpoint -q "$fs" && break
+
+        	fs="${fs%/*}"
+		if [[ -z "$fs" ]]; then
+			fs="/"
+			break
+		fi
+	done
+
+	echo -nE "$fs"
 }
 
 _usage() {
@@ -271,7 +293,7 @@ fi
 #_initial_setup
 
 # Determine attributes of "$dir"
-mnt_point="$($xSTAT --printf=%m "$dir")"
+mnt_point="$(_closest_mountpoint "$dir")"
 IFS="#" read -r filesystem device rel_path subvol_id <<< \
 	"$(_mnt2info "$mnt_point")"
 
