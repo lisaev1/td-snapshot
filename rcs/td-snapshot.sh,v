@@ -1,0 +1,2561 @@
+head	1.43;
+access;
+symbols;
+locks; strict;
+comment	@# @;
+
+
+1.43
+date	2018.12.13.00.06.04;	author lisaev;	state Exp;
+branches;
+next	1.42;
+
+1.42
+date	2018.12.13.00.03.04;	author lisaev;	state Exp;
+branches;
+next	1.41;
+
+1.41
+date	2018.12.12.22.15.22;	author lisaev;	state Exp;
+branches;
+next	1.40;
+
+1.40
+date	2018.12.12.19.36.17;	author lisaev;	state Exp;
+branches;
+next	1.39;
+
+1.39
+date	2018.12.12.19.32.19;	author lisaev;	state Exp;
+branches;
+next	1.38;
+
+1.38
+date	2018.12.11.14.07.17;	author lisaev;	state Exp;
+branches;
+next	1.37;
+
+1.37
+date	2018.12.11.13.34.58;	author lisaev;	state Exp;
+branches;
+next	1.36;
+
+1.36
+date	2018.12.11.13.11.04;	author lisaev;	state Exp;
+branches;
+next	1.35;
+
+1.35
+date	2018.12.11.12.40.49;	author lisaev;	state Exp;
+branches;
+next	1.34;
+
+1.34
+date	2018.12.10.23.24.06;	author lisaev;	state Exp;
+branches;
+next	1.33;
+
+1.33
+date	2018.12.10.23.18.17;	author lisaev;	state Exp;
+branches;
+next	1.32;
+
+1.32
+date	2018.12.09.21.35.41;	author lisaev;	state Exp;
+branches;
+next	1.31;
+
+1.31
+date	2018.12.09.21.08.16;	author lisaev;	state Exp;
+branches;
+next	1.30;
+
+1.30
+date	2018.12.09.21.05.17;	author lisaev;	state Exp;
+branches;
+next	1.29;
+
+1.29
+date	2018.12.08.19.03.54;	author lisaev;	state Exp;
+branches;
+next	1.28;
+
+1.28
+date	2018.12.08.17.57.31;	author lisaev;	state Exp;
+branches;
+next	1.27;
+
+1.27
+date	2018.12.08.16.09.05;	author lisaev;	state Exp;
+branches;
+next	1.26;
+
+1.26
+date	2018.12.08.15.27.45;	author lisaev;	state Exp;
+branches;
+next	1.25;
+
+1.25
+date	2018.12.08.14.49.34;	author lisaev;	state Exp;
+branches;
+next	1.24;
+
+1.24
+date	2018.12.08.14.12.30;	author lisaev;	state Exp;
+branches;
+next	1.23;
+
+1.23
+date	2018.12.08.08.57.17;	author lisaev;	state Exp;
+branches;
+next	1.22;
+
+1.22
+date	2018.12.08.01.30.58;	author lisaev;	state Exp;
+branches;
+next	1.21;
+
+1.21
+date	2018.12.08.00.00.12;	author lisaev;	state Exp;
+branches;
+next	1.20;
+
+1.20
+date	2018.12.07.08.44.05;	author lisaev;	state Exp;
+branches;
+next	1.19;
+
+1.19
+date	2018.12.07.08.14.21;	author lisaev;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2018.12.06.23.47.21;	author lisaev;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2018.12.05.20.11.53;	author lisaev;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2018.12.05.18.03.41;	author lisaev;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2018.12.05.12.49.10;	author lisaev;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2018.12.05.10.58.35;	author lisaev;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2018.12.04.22.29.43;	author lisaev;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2018.12.04.09.37.34;	author lisaev;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2018.12.02.11.33.51;	author lisaev;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2018.12.02.11.14.29;	author lisaev;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2018.12.01.00.15.34;	author lisaev;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2018.11.30.08.59.54;	author lisaev;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2018.11.29.20.47.17;	author lisaev;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2018.11.29.19.40.39;	author lisaev;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2018.11.29.18.23.43;	author lisaev;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2018.11.29.17.40.29;	author lisaev;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2018.11.29.13.31.38;	author lisaev;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2018.11.29.13.12.08;	author lisaev;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2018.11.12.23.55.14;	author lisaev;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.43
+log
+@Slightly tweak backup parameters: make CYCLE_LENGTH fully commensurate with
+MAX_LEV = 2, and increase MAX_CYCLES to 10.
+@
+text
+@#!/bin/bash
+
+export LC_ALL=C
+set -o nounset
+#set -o xtrace
+
+# -----------------------------------------------------------------------------
+# Backup parameters
+# -----------------------------------------------------------------------------
+
+# Length of a cycle. For a traditional case when we do lev_0 backup on Monday
+# morning and lev_n (n >= 1) on each following day of the week, CYCLE_LENGTH=7.
+declare -r CYCLE_LENGTH=9
+
+# Max level to achieve. This number must be commensurate with CYCLE_LENGTH and
+# an implicit timing of the backups. For example, within a daily backup
+# routine, one can not have MAX_LEV >= CYCLE_LENGTH. Once MAX_LEV is reached,
+# we restart from level 1.
+declare -r MAX_LEV=2
+
+# Number of cycles to keep. E.g. for a daily backup scheme with CYCLE_LENGTH=7,
+# this is the number of weeks worth of backups.
+declare -r MAX_CYCLES=10
+
+# NFS source for the backup storage
+declare -r NFS_HOST="taupo.colorado.edu"
+declare -r STORAGE_NFS="${NFS_HOST}:/export/backup"
+
+# -----------------------------------------------------------------------------
+# Global constants
+# -----------------------------------------------------------------------------
+
+# Set a reasonable $PATH variable (e.g. cron has PATH="/usr/bin:/bin")
+export PATH="/usr/bin:/usr/sbin"
+
+# Frequently used commands
+declare -a cmd=()
+declare t c s=""
+
+for c in dump rm tee btrfs mkdir mount umount realpath sha256sum cp sync; do
+	t="$(type -Pf "$c")"
+	cmd+=("${t:-/bin/false}")
+	[[ "$c" != "sha256sum" ]] && s+="x${c^^} " || s+="xSHA "
+done
+
+s="${s% }"
+read -r $s <<< "${cmd[@@]}"
+readonly $s
+
+echo -E "Commands used in this script:"
+for c in $s; do
+	echo -E "$c -> ${!c}"
+done
+unset -v t s c cmd
+
+# Now use the errexit and pipefail "protection"
+set -o errexit
+set -o pipefail
+
+# Common mount-options
+declare -r MOUNTOPTS="noexec,nosuid,nodev"
+
+# Meta data directory
+declare -r METADATA_DIR="/var/lib/td-backup"
+
+# Info about mounted filesystems
+# See "filesystems/proc.txt" in kernel docs for the format spec
+declare -r MOUNTINFO="/proc/self/mountinfo"
+
+# Short hostname of the machine
+declare -r HOST="${HOSTNAME%%.*}"
+
+# -----------------------------------------------------------------------------
+# Functions
+# -----------------------------------------------------------------------------
+
+# Scan /proc/self/mountinfo for attributes of the FS mounted at a given
+# mountpoint
+#
+# Input: $1 = mountpoint
+# Return: a set of strings separated by "#":
+#	fs = filesystem type (e.g. ext3)
+#	dev = device (e.g. /dev/sda1)
+# 	rel_path = root of the mount within the filesystem (for simple mounts
+# 	           it is "/", but for bind-mounts can be /any/dir)
+# 	s = parent subvolume ID of a dir in $1 if fs = btrfs or 0 otherwise
+_mnt2info() {
+	local mnt="$1" s fs
+	local -a a
+	local -i i
+
+	# for other attributes. Only one entry must
+	# match the desired FS, so we break the while loop after we find it.
+	while read -ra a; do
+		[[ "${a[4]}" == "$mnt" ]] && break
+	done < "$MOUNTINFO"
+
+	# "-" can be either 7th or 8th field (bash arrays are 0-based)
+	for i in 6 7; do
+		[[ "${a[i]}" == "-" ]] && break
+	done
+	fs="${a[i + 1]}"
+
+	# For btrfs, we extract the subvolume ID (or set it to 0 otherwise).
+	if [[ "$fs" == "btrfs" ]]; then
+		s="${a[-1]#*,subvolid=}"
+		s="${s%,*}"
+	else
+		s="0"
+	fi
+
+	echo -nE "${fs}#${a[i + 2]}#${a[3]}#${s}"
+}
+
+#
+# Determine subvol ID by its name (if $1 = id), or vice versa (if $1 = name) of
+# a BTRFS subvolume -- works only on a mounted FS!
+#
+# Input: $1 = what to return (id/name)
+#	$2 = known characteristic (id/name)
+#	$3 = FS mountpoint
+# Return: name of the subvolume
+_btrfs_idname() {
+	local t="$1" c="$2" m="$3"
+	local -i i1 i2
+	local -a a
+
+	case "$t" in
+		name | n ) # We want to find subvol name by its ID
+		       i1=1
+		       i2=-1
+		;;
+		id | i | ID ) # We want to find subvol ID by its name
+		     i1=-1
+		     i2=1
+		;;
+		* ) # For anythin else we quit
+		    echo -E "_btrfs_idname(): 1st arg must be either \"id\" or \"name\""
+		    exit 1
+	esac
+
+	while read -ra a; do
+		[[ "${a[$i1]##*/}" == "$c" ]] && break
+	done < <($xBTRFS subvolume list "$m")
+
+	echo -nE "${a[$i2]}"
+}
+
+#
+# Make & mount ro snapshot when the backup target is on btrfs
+#
+# Input: $1 = mode of operation (create/destroy)
+#	$2 = device
+# 	$3 = subvolid
+# Return: ID of the snapshot
+_btrfs_snapshot() {
+	local mode="$1" dev="$2" subvolid="$3" snap_name name snap_id
+	local -r snap_dir="_$(< /etc/machine-id)_backup_snapshots"
+
+	if [[ "x$mode" == "xcreate" ]]; then
+		# We want to create the snapshot
+		echo -E "+++ Making and mounting btrfs snapshot..." 1>&2
+	else
+		# We are done and want to destroy the snapshot. Remember that
+		# after calling "_btrfs_snapshot create", "$SRC_MNT" is a
+		# mountpoint for the *snapshot*, so we umount it first, then
+		# mount the full device and delete the snapshot.
+		echo -E "+++ Dismantling btrfs snapshot..."
+		_tee $xUMOUNT -v "$SRC_MNT"
+	fi
+
+	# Mount the entire BTRFS device "$dev"
+	_tee $xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT"
+
+	# For our subvolid (!= 5), find the corresponding name. The
+	# subvolid = 5 does not show up in the list and "$name" is unset.
+	[[ "$subvolid" != "5" ]] && \
+		name="$(_btrfs_idname "name" "$subvolid" "$SRC_MNT")"
+	snap_name="backup-snapshot-${name:-"id5"}-$SFX"
+
+	if [[ "x$mode" == "xdestroy" ]]; then
+		_tee $xBTRFS subvolume delete -C \
+			"${SRC_MNT}/${snap_dir}/$snap_name"
+		_tee $xUMOUNT -v "$SRC_MNT"
+		echo -E "--- btrfs snapshot \"${snap_name}\" destroyed"
+
+		return 0
+	fi
+
+	# If necessary, make a subvolume for future snapshots
+	[[ ! -d "${SRC_MNT}/$snap_dir" ]] && \
+		_tee $xBTRFS subvolume create "${SRC_MNT}/$snap_dir"
+
+	# Snapshot our parent subvolume and mount it ro
+	_tee $xBTRFS subvolume snapshot -r "${SRC_MNT}/$name" \
+		"${SRC_MNT}/${snap_dir}/$snap_name"
+	snap_id="$(_btrfs_idname "id" "$snap_name" "$SRC_MNT")"
+
+	_tee $xUMOUNT -v "$SRC_MNT"
+	_tee $xMOUNT -v -o "ro,${MOUNTOPTS},subvolid=$snap_id" "$dev" \
+		"$SRC_MNT"
+
+	echo -E "--- snapshot ID $snap_id mounted at $SRC_MNT" 1>&2
+	echo -nE "$name"
+}
+
+#
+# LVM snapshots.
+# Contrary to btrfs, LVM needs an explicit space allocation for snapshots.
+# Therefore, we will:
+# - create a 500M loop device located in RAM (/dev/shm);
+# - turn it into a PV, and extend the proper VG over it;
+# - make a snapshot of the proper LV.
+#
+# Input: $1 = mode of operation (create/destroy)
+#	$2 = device
+_lvm_snapshot() {
+	local mode="$1" dev="$2" lv vg loop_img loop_dev snap_name x
+	local -r xLOSETUP="$(type -pf losetup)"
+
+	# Get LV and VG names for the device "$dev"
+	read -r lv vg < \
+		<(/usr/sbin/lvs --noheadings -o lvname,vgname "$dev")
+	snap_name="backup-snapshot-${vg}_${lv}-$SFX"
+
+	# Create the auxiliary loop dev
+	loop_img="/dev/shm/${snap_name}.img"
+	if [[ -f "$loop_img" ]]; then
+		IFS=":" read -r loop_dev x < \
+			<($xLOSETUP -j "$loop_img")
+	else
+		_tee /usr/bin/dd if=/dev/zero of="$loop_img" bs=500M count=1
+		loop_dev="$($xLOSETUP --show -f "$loop_img")"
+	fi
+
+	# We are done and want to destroy the snapshot
+	if [[ "x$mode" == "xdestroy" ]]; then
+		echo -E "+++ Dismantling LVM snapshot \"${vg}/${snap_name}\"..."
+		_tee $xUMOUNT -v "$SRC_MNT"
+		_tee /usr/sbin/lvremove -v -y "${vg}/$snap_name"
+		_tee /usr/sbin/vgreduce -v -y "$vg" "$loop_dev"
+		_tee /usr/sbin/pvremove -v -y "$loop_dev"
+		_tee $xLOSETUP -d "$loop_dev"
+		_tee $xRM -v -- "$loop_img"
+
+		echo -E "--- LVM snapshot destroyed"
+
+		return 0
+	fi
+
+	# If we are here, we want to create the snapshot
+	echo -E "+++ Making and mounting LVM snapshot..." 1>&2
+
+	# Initialize "$loop_dev" as a PV and include it into "$vg"
+	_tee /usr/sbin/pvcreate -v -y "$loop_dev"
+	_tee /usr/sbin/vgextend -v -y "$vg" "$loop_dev"
+
+	# Create and mount the snapshot
+	_tee /usr/sbin/lvcreate -v -y -p r -l "100%PVS" -n "$snap_name" \
+		-s "${vg}/$lv" "$loop_dev"
+	_tee $xMOUNT -v -o "ro,${MOUNTOPTS}" "/dev/${vg}/$snap_name" "$SRC_MNT"
+
+	echo -E "--- LVM snapshot \"${vg}/${snap_name}\" mounted at \"${SRC_MNT}\"" 1>&2
+	return 0
+}
+
+#
+# A trivial function to make a "snapshot" of the backup target when it resides
+# neither on a btrfs filesystem or an LV. In this case, the snapshot is simply
+# a ro mount of the original device.
+#
+# Input: $1 = mode of operation (create/destroy)
+#	$2 = device
+_none_snapshot() {
+	local mode="$1" dev="$2"
+
+	# We are done and want to umount the backup target
+	if [[ "x$mode" == "xdestroy" ]]; then
+		echo -E "+++ Dismantling the ro mount at \"${SRC_MNT}\"..."
+		_tee $xUMOUNT -v "$SRC_MNT"
+		echo -E "--- $SRC_MNT unmounted"
+		return 0
+	fi
+
+	# If we are here, we want to ro mount the backup target
+	echo -E "+++ Mounting ro the backup target..." 1>&2
+	_tee $xMOUNT -v "$dev" "$SRC_MNT"
+	echo -E "--- Backup target is mounted at \"${SRC_MNT}\"" 1>&2
+
+	return 0
+}
+
+#
+# Initial setup (if called for the first time)
+#
+_initial_metadata_setup() {
+	local fs x
+
+	echo -E "+++ Creating metadata directory \"$METADATA_DIR\"..."
+	# Create the "$METADATA_DIR" if not present already. On a btrfs
+	# filesystem, we create a subvolume. Otherwise, a normal dir.
+	if [[ ! -d "$METADATA_DIR" ]]; then 
+		IFS="#" read -r fs x <<< \
+			"$(_mnt2info "$(_closest_mountpoint /var/lib)")"
+
+		if [[ "$fs" == "btrfs" ]]; then
+			_tee $xBTRFS subvolume create "$METADATA_DIR"
+		else
+			_tee $xMKDIR -v "$METADATA_DIR"
+		fi
+	fi
+
+	echo -E "--- initial setup done."
+	return 0
+}
+
+#
+# Determine state of the backup routine by reading "${METADATA_DIR}/state" if
+# present. The state file has a space/tab-separated (dump-like) format:
+# <ID> <tar/dump backend> <level> <UTC timestamp> <branch id>
+# 	<sha256sum of backup> <filename of the backup archive>
+# For example:
+# 2312f5635ef572c t 0 1543961163 0000 <sha256sum> <fn>
+# 2312f5635ef572c t 1 1543981163 014a <sha256sum> <fn>
+# 2312f5635ef572c t 2 1543981180 014a <sha256sum> <fn>
+# ...
+# Clearly, the backend shouldn't change within a cycle, but it can be different
+# for different cycles.
+#
+# Output: A set of strings separated by "#":
+#	id = backup ID (either generated or read from the state file);
+#	lev = level of the backup to continue with (special value -1 means that
+#		a new cycle will start at level 0);
+#	b = "tar" or "dump" backend used to take prev snapshot;
+#	br = branch ID used to group together related dumps with lev >= 1.
+_read_state() {
+	local id x b br
+	local -i lev n
+	local -a a
+
+	echo -E "+++ Parsing the state file at \"${STATE_FILE}\"..." 1>&2
+	if [[ -f "$STATE_FILE" ]]; then
+		n=0
+		while read -ra a; do
+			(( ++n ))
+			read -r id b lev x br <<< "${a[@@]:0:5}"
+		done < "$STATE_FILE"
+		if [[ "$b" == "t" ]]; then
+			b="tar"
+		else
+			b="dump"
+		fi
+
+		x="$(/usr/bin/date -d "@@$x")"
+		{
+		 echo -E "... Current cycle ID is \"${id}\". The last backup at"
+		 echo -E "... level $lev was taken on ${x} using ${b}."
+	 	} 1>&2
+
+		if (( n >= CYCLE_LENGTH )); then
+			# We need to start a new cycle (with a new ID). The
+			# special value lev = -1 indicates rotation of backups.
+			# We also unset the backend variable to cover cases
+			# when a user wants to switch backend in the new cycle.
+			(( lev = -1 ))
+			echo -E "... Present cycle ended, starting a new one" 1>&2
+		elif (( lev >= MAX_LEV )); then
+			# We reached the max level and return back to level 1.
+			# The ID is the same as the last backup.
+			lev=1
+			echo -E "... Max level reached, proceeding with lev 1" 1>&2
+		else
+			# Otherwise, just increment the last level value,
+			# keeping the same ID.
+			(( ++lev ))
+			echo -E "... Continuing cycle with lev ${lev}" 1>&2
+		fi
+	else
+		# If the state file doesn't exist, we start fresh (lev is set
+		# to -1 to indicate rotation of backups that may exist, because
+		# such situation would be common when an OS is reinstalled and
+		# state files are lost but backups are present).
+		(( lev = -1 ))
+		echo -E "... State file not found, starting a new cycle." 1>&2
+	fi
+	echo -E "--- Finished reading state file." 1>&2
+
+	if (( lev == -1 )); then
+		id="$(_rnd_alnum 15)"
+		b=""
+		br="0000"
+	elif (( lev == 1 )); then
+		br="$(_rnd_alnum 4)."
+	else
+		br="${br}."
+	fi
+	echo -nE "${id}#${lev}#${b}#$br"
+}
+
+#
+# Rotate backups on the server. The backup directory structure (starting from
+# the storage mountpoint):
+# /storage
+# |
+# |-- host1/
+# |   |-- backup_name_1/
+# |   |   |-- 0/
+# |   |   |-- 1/
+# |   |   ...
+# |   |   `-- MAX_CYCLES/
+# |   |-- backup_name_2/
+# |   ...
+# |-- host2/
+# ...
+#
+_rotate_backups() {
+	local d x
+	local -i i
+
+	echo -E "+++ Rotating backups..."
+
+	d="${STORAGE_DIR}/$MAX_CYCLES"
+	if [[ -d "$d" ]]; then
+		echo -E "... Removing backup with number $MAX_CYCLES (= max)"
+		_tee $xRM -vr -- "$d"
+	fi
+
+	for (( i = MAX_CYCLES - 1; i >= 0; --i )); do
+		x="${STORAGE_DIR}/$i"
+		[[ -d "$x" ]] && \
+		      _tee /usr/bin/mv -v -- "$x" "${STORAGE_DIR}/$(( i + 1 ))"
+	done
+	_tee $xMKDIR -v "${STORAGE_DIR}/0"
+
+	echo -E "--- Backup rotation done."
+}
+
+#
+# Clean up the metadata directory
+#
+# Input: $1 = backup name
+_metadata_cleanup() {
+	local name="$1" f r
+
+	# Purge old snapshot files
+	for f in "${METADATA_DIR}/"*; do
+		[[ (! -f "$f") || (! "$f" =~ -db-) ]] && continue
+
+		r="-db-${backup_name}-"
+		[[ ("$f" =~ $r) && (! "$f" =~ ${r}$ID) ]] && \
+			_tee $xRM -v -- "$f"
+	done
+
+	return 0
+}
+
+#
+# Incremental backup function using TAR/DUMP
+#
+# Input: $1 = level of this backup
+#	$2 = path to compress ($rel_path)
+# Output: a shasum-formatted string:
+#	"sha256sum  backup_file_name"
+_tar_backup() {
+	local lev="$1" path="$2" d cs x f
+
+	(( lev )) && _tee $xCP -v -- \
+		"${SNAPSHOT_FILE%.*}.$(( lev - 1 ))" "$SNAPSHOT_FILE"
+	_tee $xSYNC
+
+	d="$(date -d "@@$UTC_TS" "+%Y%m%d")"
+	f="${SFX}.${BRANCH_ID}lev${lev}.${d}.tar.xz"
+	if x="$(/usr/bin/tar --xattrs -Jpc \
+		--listed-incremental="$SNAPSHOT_FILE" -f - -C "$path" . | \
+		$xTEE "${STORAGE_DIR}/0/$f" | $xSHA -)"; then
+		IFS=" -" read -r cs <<< "$x"
+	else
+		cs="$ID"
+	fi
+	echo -nE "$cs $f"
+}
+
+_dump_backup() {
+	local lev="$1" path="$2" d cs x f
+
+	# dump doesn't like changing device names (e.g. lvm snapshots whose
+	# names contain timestamps). Therefore, we hack SNAPSHOT_FILE to
+	# replace old snapshot names with the current one.
+	if [[ -f "$SNAPSHOT_FILE" ]]; then
+		x="(.*)[0-9]{"${#UTC_TS}"}--${ID}(.*)"
+		cs="$(< "$SNAPSHOT_FILE")"
+		while read -r d; do
+		   [[ "$d" =~ $x ]] && \
+		      echo -E "${BASH_REMATCH[1]}${SFX/-/--}${BASH_REMATCH[2]}"
+		done <<< "$cs" > "$SNAPSHOT_FILE"
+	fi
+
+	d="$(date -d "@@$UTC_TS" "+%Y%m%d")"
+	f="${SFX}.${BRANCH_ID}lev${lev}.${d}.dump.gz"
+	if x="$($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" | \
+		$xTEE "${STORAGE_DIR}/0/$f" | $xSHA -)"; then
+		IFS=" -" read -r cs <<< "$x"
+	else
+		cs="$ID"
+	fi
+	echo -nE "$cs $f"
+}
+
+#
+# Sanitize paths
+#
+# Avoid common cases when the dir name starts with "-", etc.
+#
+# Input: $1 = filename to sanitize
+# Return: canonicalized filename with prepended full directory path
+_sanitize_filename() {
+        local f="$1"
+
+	f="${f%/}"
+	[[ "x${f#-}" == "x$f" ]] || f="./$f"
+	[[ "x${f##*/}" == "x$f" ]] && f="./$f"
+	echo -nE "$($xREALPATH "$f")"
+}
+
+#
+# Check if the directory to be backed up actually exists
+#
+# Input: $1 = filename to check
+_check_dir() {
+        if [[ ! -d "$1" ]]; then
+                echo -E "Can not access directory \"${1}\"."
+		echo "Does it exist and have proper permissions?"
+                return 1
+        fi
+}
+
+#
+# Find the closest mountpoint for a directory, emulating stat --printf=%m. The
+# latter has an issue with btrfs subvolumes, as it returns the closest
+# subvolume even if the actual mountpoint is higher up the tree.
+#
+# Input: $1 = directory
+# Return: mountpoint path
+_closest_mountpoint() {
+	local fs="$1"
+
+	while :; do
+        	/usr/bin/mountpoint -q "$fs" && break
+
+        	fs="${fs%/*}"
+		if [[ -z "$fs" ]]; then
+			fs="/"
+			break
+		fi
+	done
+
+	echo -nE "$fs"
+}
+
+#
+# Generate a random lower-case alpha-numeric string of a given length.
+#
+# Input: $1 = length
+# Return: random string
+_rnd_alnum() {
+	local -i l="$1"
+	local s="$(printf "%x" $RANDOM)"
+
+	(( l <= 0 )) && return 1
+
+	while (( ${#s} < l )); do
+        	s="$(printf "%x" $RANDOM)$s"
+	done
+
+	l=$(( ${#s} - l ))
+	while (( l )); do
+        	s="${s%[0-9a-f]}"
+        	(( --l ))
+	done
+
+	echo -nE "$s"
+}
+
+#
+# A tee-like function to echo a command before executing it.
+#
+# Input: command
+_tee() {
+	echo ""
+	echo -E "~~>  $@@" 
+	"$@@"
+} 1>&2
+
+_usage() {
+	echo ""
+	echo "Usage: td-snapshot.sh [-t tar|dump] -p <path> -n <name>"
+	echo "-t <backend> : use tar(1) or dump(1) for incremental backups"
+	echo "               if dump(1) is installed, use it for ext{2,3,4}"
+	echo "               filesystems. Otherwise, use tar(1)."
+	echo "-p <path>    : /path/to/data to backup"
+	echo "-n <name>    : mnemonic name of the backup, e.g. \"home\". It is"
+	echo "               used to name a dir with incremental backups."
+
+	return 0
+}
+
+# -----------------------------------------------------------------------------
+# Main program
+# -----------------------------------------------------------------------------
+
+# Declare veriables just to keep track of them
+declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
+	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf SNAPSHOT_FILE backup_name \
+	STORAGE_DIR STATE_FILE sha1 sha2 BRANCH_ID
+declare -i lev
+declare -a state_data
+
+# Handle the arguments
+while getopts "t:p:n:h" arg; do
+	case $arg in
+		t ) # quit if not "tar" or "dump"
+		    if [[ "$OPTARG"  == "tar" || "$OPTARG" == "dump" ]]; then
+			    backend="$OPTARG"
+		    else
+			    echo -E "Invalid backend \"${OPTARG}\""
+			    _usage
+			    exit 1
+		    fi
+		;;
+		p ) # sanitize the path
+		    dir="$(_sanitize_filename "$OPTARG")"
+		    _check_dir "$dir" || exit 1
+		;;
+		n ) # name can't contain "/", so we replace them with "+"
+		    backup_name="${OPTARG//\//+}"
+		;;
+		h | * ) # print usage and exit
+			_usage
+			exit 0
+		;;
+	esac
+done
+
+# Abort if no "-p" option was provided
+if [[ -z "$dir" ]]; then
+	echo -E "No path is provided... aborting"
+	_usage
+	exit 1
+fi
+
+# If no "-n" option was supplied, use "$dir" as the backup name (replacing "/"
+# with "+")... 
+if [[ -z "$backup_name" ]]; then
+	backup_name="$($xREALPATH "$dir")"
+	backup_name="${backup_name//\//+}"
+fi
+
+#
+# General preparations
+#
+
+# Do some initial checks and setup the metadata directory
+_initial_metadata_setup
+
+# Set up more global constants:
+#	SRC_MNT = mountpoint for the dir to be backed up
+#	STORAGE_MNT = mountpoint for the backup storage
+#	STORAGE_DIR = path to the actual backups (beneath $STORAGE_MNT)
+#	STATE_FILE = state file for this $backup_name
+b_sf="$(_rnd_alnum 15)"
+readonly SRC_MNT="/dev/shm/backup-$b_sf"
+if [[ "$HOSTNAME" == "$NFS_HOST" ]]; then
+	STORAGE_MNT="/export/backup"
+else
+	STORAGE_MNT="/dev/shm/storage-$b_sf"
+fi
+readonly STORAGE_MNT STORAGE_DIR="${STORAGE_MNT}/${HOST}/$backup_name" \
+	STATE_FILE="${METADATA_DIR}/${backup_name}.state"
+
+# Read the state file
+IFS="#" read -r ID lev b_sf BRANCH_ID <<< "$(_read_state)"
+readonly ID
+
+# Clean up old snapshot files that won't be used
+_metadata_cleanup "$backup_name"
+
+# Create the mountpoints and mount the storage
+_tee $xMKDIR -v "$SRC_MNT"
+if [[ "$HOSTNAME" != "$NFS_HOST" ]]; then
+	_tee $xMKDIR -v "$STORAGE_MNT"
+	_tee $xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
+fi
+
+#
+# Backup logic
+#
+
+# If the storage is fresh and we don't have the proper dir tree, we create the
+# directory for the current cycle. Otherwise, we check if "$lev" == -1 and
+# unconditionally rotate backups if yes.
+if [[ ! -d "${STORAGE_DIR}/0" ]]; then
+	if [[ -f "$STATE_FILE" ]]; then
+		echo -E "!!! Warning !!!"
+		echo -E "State file exists, but not the backup directory tree."
+		echo -E "Assuming that previous backups are lost. Reverting to"
+		echo -E "level 0 dump and removing state file."
+		_tee $xRM -v -- "$STATE_FILE"
+		b_sf=""
+	fi
+	_tee $xMKDIR -vp "${STORAGE_DIR}/0"
+	lev=0
+else
+	# Level -1 occurs if there were no state file (fresh start) or a new
+	# cycle started. In both cases, we set lev to 0 and remove state file.
+	if (( lev == -1 )); then
+		_rotate_backups
+		[[ -f "$STATE_FILE" ]] && _tee $xRM -v -- "$STATE_FILE"
+		lev=0
+	fi
+fi
+
+#
+# Snapshotting logic
+#
+
+# Determine attributes of "$dir"
+mnt_point="$(_closest_mountpoint "$dir")"
+IFS="#" read -r filesystem device rel_path subvol_id <<< \
+	"$(_mnt2info "$mnt_point")"
+
+# Next we proceed as follows:
+# * if "$dir" is on a btrfs subvolume (or is a mountpoint for a subvolume,
+#   remember that the root btrfs FS is also a subvolume with ID = 5), we will
+#   use btrfs native snapshotting capabilities;
+# * if "$dir" is not on btrfs, we check whether it belongs to (or is a
+#   mountpoint for) a logical volume and, if yes, use LVM snapshots. Otherwise
+#   (if we have a basic device), no snapshotting will be done.
+if [[ "$filesystem" == "btrfs" ]]; then
+	snap_type="btrfs"
+elif /usr/sbin/lvs "$device" &> /dev/null; then
+	snap_type="lvm"
+else
+	snap_type="none"
+fi
+
+# Check that btrfs-progs is installed
+if [[ (-z "$xBTRFS") && ("$snap_type" == "btrfs") ]]; then
+	echo -E "Can't use btrfs snapshots because \"btrfs-progs\" is not installed!"
+	exit 1
+fi
+
+# Set up more global constants:
+#	UTC_TS = Timestamp of this backup
+# 	SFX = common unique suffix for dir names
+readonly UTC_TS="$(/usr/bin/date "+%s")"
+readonly SFX="${UTC_TS}-$ID"
+
+# Print status
+echo -E "Timestamp / ID: $UTC_TS / $ID"
+echo -E "Host: $HOST"
+echo -E "Backup target: \"${dir}\""
+echo -E "Backup name: \"${backup_name}\""
+echo -E "Level: $lev"
+[[ "$subvol_id" != "0" ]] && echo -E "Parent subvolume ID: $subvol_id"
+echo -E "Closest mountpoint: \"${mnt_point}\""
+echo -E "Path within parent device: \"${rel_path}\""
+echo -E "Device: $device"
+echo -E "Snapshots: $snap_type"
+echo ""
+
+# Create a shapshot
+subvol_name="$("_${snap_type}_snapshot" "create" "$device" "$subvol_id")"
+if [[ -n "$subvol_name" ]]; then
+	rel_path="${SRC_MNT}/${rel_path#/${subvol_name}}"
+else
+	rel_path="${SRC_MNT}/${rel_path#/}"
+fi
+rel_path="${rel_path}/${dir#${mnt_point}}"
+
+#
+# Decide whether we want to use tar or dump
+#
+# If the previous backup used a particular backend (stored in "$b_sf"), then we
+# ignore the backend specified via the "-t" cmdline switch. If "$b_sf" is null,
+# we take the cmdline argument or set a default value for "$backend".
+# We use dump only when (1) the script is run against a mountpoint, (2) the
+# filesystem is ext2/3/4, and (3) dump is installed. If these conditions are
+# met, dump is the default backend. Otherwise, we use tar.
+if [[ -z "$b_sf" ]]; then
+	if [[ ("$($xREALPATH "$rel_path")" == "$SRC_MNT") && \
+	  ("$filesystem" =~ ^ext[2-4]$) && ("$xDUMP" != "/bin/false") ]]; then
+		: "${backend:="dump"}"
+	else
+		backend="tar"
+	fi
+else
+	backend="$b_sf"
+fi
+echo ""
+echo -E "Using the $backend backend..."
+
+#
+# Checks w.r.t. tar or dump incremental backup snapshot files
+#
+# When (( lev != 0 )), we need to check if the tar or dump states used in
+# building an incremental snapshot are present
+if (( lev > 0 )); then
+	echo ""
+	echo -E "Checking presence of the previous $backend snapshot file..."
+
+	b_sf="${METADATA_DIR}/${backend}-db-${backup_name}-$ID"
+	[[ "$backend" == "tar" ]] && b_sf="${b_sf}.$(( lev - 1 ))"
+	if [[ ! -f "$b_sf" ]]; then
+		echo -E "!!! Warning !!!"
+		echo -E "Level is ${lev}, but no lev $(( lev - 1 )) snapshot
+info found! Something went wrong..."
+		echo -E "Resetting to level 0 and purging the state file."
+		_tee $xRM -v -- "$STATE_FILE"
+		lev=0
+	fi
+fi
+
+# Specify the tar or dump snapshot filename (for dump, aka dumpdates) 
+SNAPSHOT_FILE="${METADATA_DIR}/${backend}-db-${backup_name}-$ID"
+if [[ "$backend" == "tar" ]]; then
+	SNAPSHOT_FILE="${SNAPSHOT_FILE}.$lev"
+	[[ -f "$SNAPSHOT_FILE" ]] && _tee $xRM -v -- "$SNAPSHOT_FILE"
+fi
+readonly SNAPSHOT_FILE
+
+# Set the branch id
+(( lev == 0 )) && BRANCH_ID=""
+readonly BRANCH_ID
+
+# Do backup, verify it and update the state file with the new record
+if [[ -z "$BRANCH_ID" ]]; then
+	b_sf="0000"
+else
+	b_sf="${BRANCH_ID%\.}"
+fi
+echo -E "Starting ${backend^^} level $lev snapshot..."
+read -ra state_data <<< \
+   "$ID ${backend:0:1} $lev $UTC_TS $b_sf \
+   $("_${backend}_backup" "$lev" "$rel_path")"
+_tee $xSYNC
+
+b_sf="${STORAGE_DIR}/0/${state_data[-1]}"
+if [[ "${state_data[-2]}" == "$ID" ]]; then
+	echo -E "Creating archive using ${backend^^} FAILED!!! Cleaning up..."
+	_tee $xRM -v -- "$b_sf"
+else
+	echo -E "Verifying the archive..."
+	if echo -nE "${state_data[-2]}  $b_sf" | $xSHA -c -; then
+		echo -E "${state_data[@@]}" >> "$STATE_FILE"
+
+		echo -E "${backend^^} snapshot ready!"
+		echo -E "File: ${state_data[-1]}"
+		echo -E "Checksum: ${state_data[-2]}"
+
+		# Save the state file and snapshot data to the backup host
+		_tee $xCP -v -- "$STATE_FILE" "$SNAPSHOT_FILE" \
+			"${STORAGE_DIR}/0/"
+
+		# We need "$STATE_FILE" on the server because it provides a map
+		# for figuring out correct backup recovery path
+		_tee $xSYNC
+		read -r sha1 b_sf < <($xSHA "$STATE_FILE")
+		read -r sha2 b_sf < <($xSHA \
+		   "${STORAGE_DIR}/0/${STATE_FILE#$METADATA_DIR}" 2> /dev/null)
+		if [[ "x$sha1" != "x$sha2" ]]; then
+			echo -E "!!! Warning !!!"
+			echo -E "State file \"${STATE_FILE#${METADATA_DIR}/}\" could not be copied to \"${STORAGE_DIR}/0\"!"
+			echo -E "Consult \"${STATE_FILE}\" for archive checksums."
+		fi
+	else
+		echo -E "VERIFICATION FAILED!!!"
+		echo -E "Removing archive and aborting..."
+		_tee $xRM -v -- "$b_sf"
+	fi
+fi
+
+# Cleanup the snapshots, umount storage and delete mountpoints
+echo ""
+echo -E "!!! Cleanup !!!"
+echo ""
+
+"_${snap_type}_snapshot" "destroy" "$device" "$subvol_id"
+
+if [[ "$HOSTNAME" != "$NFS_HOST" ]]; then
+	echo ""
+	echo -E "Unmounting storage..."
+	_tee $xUMOUNT -v "$STORAGE_MNT"
+fi
+
+echo ""
+echo -E "Removing mountpoints..."
+_tee /usr/bin/rmdir -v "$SRC_MNT"
+[[ "$HOSTNAME" != "$NFS_HOST" ]] && _tee /usr/bin/rmdir -v "$STORAGE_MNT"
+@
+
+
+1.42
+log
+@* Add a global parameter for the sync(1) command;
+* _read_state(): add a trailing dot to branch id when lev is > 1;
+* main(): when updating the state file, remove the trailing dot from grp id.
+@
+text
+@d13 1
+a13 1
+declare -r CYCLE_LENGTH=10
+d23 1
+a23 1
+declare -r MAX_CYCLES=8
+@
+
+
+1.41
+log
+@* Modify the state file format to include branch id that identifies backup
+  recovery paths by grouping archives with lev >= 1;
+* _tar/dump_backup(): store archive filename in a separate variable (because
+                      expressions are already long);
+* _read_state(): streamline logic. Note, that we generate random ID every
+                 time we set lev = -1, and the same applies to setting an
+                 ampty backend string. Therefore, group these operations.
+@
+text
+@d40 1
+a40 1
+for c in dump rm tee btrfs mkdir mount umount realpath sha256sum cp; do
+d394 2
+d469 1
+d836 5
+d843 1
+a843 1
+   "$ID ${backend:0:1} $lev $UTC_TS ${BRANCH_ID:-"0000"} \
+d845 1
+a845 1
+/usr/bin/sync
+d866 1
+a866 1
+		/usr/bin/sync
+@
+
+
+1.40
+log
+@main(): sync cached writes to storage after generating a dump (just in case)
+@
+text
+@d320 2
+a321 2
+# <ID> <tar/dump backend> <level> <UTC timestamp> <sha256sum of backup>
+# <filename of the backup archive>
+d323 3
+a325 3
+# 2312f5635ef572c t 0 1543961163 <sha256sum> <fn>
+# 2312f5635ef572c t 1 1543981163 <sha256sum> <fn>
+# 2312f5635ef572c t 2 1543981180 <sha256sum> <fn>
+d334 2
+a335 1
+#	b = "tar" or "dump" backend used to take prev snapshot.
+d337 1
+a337 1
+	local id x b
+a340 1
+	b=""
+d346 1
+a346 1
+			read -r id b lev x <<< "${a[@@]:0:4}"
+a364 1
+			id="$(_rnd_alnum 15)"
+a365 1
+
+a370 1
+
+a375 1
+
+a382 1
+		id="$(_rnd_alnum 15)"
+d384 1
+a384 2
+
+		echo -E "... State file not found. Starting a new cycle with ID = $id ." 1>&2
+d388 8
+a395 1
+	echo -nE "${id}#${lev}#$b"
+d463 1
+a463 1
+	local lev="$1" path="$2" d cs x
+d469 1
+d472 1
+a472 2
+		$xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.tar.xz" | \
+		$xSHA -)"; then
+d477 1
+a477 1
+	echo -nE "$cs ${SFX}.lev${lev}.${d}.tar.xz"
+d481 1
+a481 1
+	local lev="$1" path="$2" d cs x
+d496 1
+d498 1
+a498 2
+		$xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.dump.gz" | \
+		$xSHA -)"; then
+d503 1
+a503 1
+	echo -nE "$cs ${SFX}.lev${lev}.${d}.dump.gz"
+d611 1
+a611 1
+	STORAGE_DIR STATE_FILE sha1 sha2
+d678 1
+a678 1
+IFS="#" read -r ID lev b_sf <<< "$(_read_state)"
+d828 4
+d835 2
+a836 1
+   "$ID ${backend:0:1} $lev $UTC_TS $("_${backend}_backup" "$lev" "$rel_path")"
+@
+
+
+1.39
+log
+@main():
+   State file provides a map for correct backup recovery path (i.e. it allows
+   to answer a question which lev1 dump corresponds to a given lev2) by
+   providing checksums of the archives. Therefore, we need to verify that it
+   has been copied to the backup host and the remote copy is the same as the
+   one in /var/lib/td-snapshot.
+
+   If these copis don't match, generate a warning.
+@
+text
+@d831 1
+@
+
+
+1.38
+log
+@_dump_backup(): fix up the dump snapshot file only if it exists
+@
+text
+@d610 1
+a610 1
+	STORAGE_DIR STATE_FILE
+d847 13
+a859 1
+			"$STORAGE_DIR/0/"
+@
+
+
+1.37
+log
+@* _read_state(): set the backend to an empty string by default (because
+                 otherwise we would need to set it in every clause of CASE to
+                 avoid errors due to "set -o nounset";
+* main(): slightly change message when tar/dump fails.
+@
+text
+@d485 5
+a489 4
+	x="(.*)[0-9]{"${#UTC_TS}"}--${ID}(.*)"
+	cs="$(< "$SNAPSHOT_FILE")"
+	while read -r d; do
+		[[ "$d" =~ $x ]] && \
+d491 2
+a492 1
+	done <<< "$cs" > "$SNAPSHOT_FILE"
+@
+
+
+1.36
+log
+@* Abort when expanding unset variables (set -o nounset);
+* _tar/dump_backup(): always return a proper pair (hash filename), but set
+                      has to ID when tar/dump fails;
+* _tar_backup(): FORGOT TO MENTION IN THE PREVIOUS COMMIT: use xz instead of 
+                 bzip2 for better compression (-J instead of -j);
+* main(): verify checksum only if it is proper, i.e. when tar/dump did not
+          err out. Also, copy STATE_FILE and SNAPSHOT_FILE to storage in
+          case of the successful verification.
+@
+text
+@d340 1
+a366 1
+			b=""
+d832 1
+a832 2
+	echo -E "Creating archive using ${backend^^} FAILED!!!"
+	echo -E "Removing archive and aborting..."
+@
+
+
+1.35
+log
+@* Enable the pipefail option to propagate error codes through pipe sequemnces;
+* _tar/dump_backup(): use command substitution to get hash of the archive,
+                      instead of process substitution. This way, it tar/dump
+                      fails. we can catch the error.
+@
+text
+@d4 1
+d473 2
+a474 1
+		echo -nE "$cs ${SFX}.lev${lev}.${d}.tar.xz"
+d476 1
+d497 2
+a498 1
+		echo -nE "$cs ${SFX}.lev${lev}.${d}.dump.gz"
+d500 1
+a829 1
+echo -E "Verifying the archive..."
+d831 2
+a832 8
+if echo -nE "${state_data[-2]}  $b_sf" | $xSHA -c -; then
+	echo -E "${state_data[@@]}" >> "$STATE_FILE"
+
+	echo -E "${backend^^} snapshot ready!"
+	echo -E "File: ${state_data[-1]}"
+	echo -E "Checksum: ${state_data[-2]}"
+else
+	echo -E "VERIFICATION FAILED!!!"
+d835 17
+a853 3
+# Save the state file and snapshot data to the backup host
+_tee $xCP -v -- "$STATE_FILE" "$SNAPSHOT_FILE" "$STORAGE_DIR/0/"
+
+d855 1
+@
+
+
+1.34
+log
+@main(): because of new way xDUMP is assigned, don't test if it's on-zero,
+        instead compare it with /bin/false when deciding whether to use dump
+@
+text
+@d55 1
+a55 1
+# Now use the set -e "protection"
+d57 1
+d467 7
+a473 5
+	read -r cs x < <(/usr/bin/tar --xattrs -jpc \
+	      --listed-incremental="$SNAPSHOT_FILE" -f - -C "$path" . | \
+	      $xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.tar.bz2" | $xSHA -)
+
+	echo -nE "$cs ${SFX}.lev${lev}.${d}.tar.bz2"
+d490 6
+a495 5
+	read -r cs x < \
+		<($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" |\
+	      $xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.dump.gz" | $xSHA -)
+
+	echo -nE "$cs ${SFX}.lev${lev}.${d}.dump.gz"
+@
+
+
+1.33
+log
+@main(): use automatic assignement of xCOMMAND-type variables;
+        replace "type -pf" with "type -Pf";
+        explicitly set the PATH variable
+@
+text
+@d776 1
+a776 1
+		("$filesystem" =~ ^ext[2-4]$) && (-n "$xDUMP") ]]; then
+@
+
+
+1.32
+log
+@_dump_backup(): work around the fact that dump needs static device names in
+                its SNAPSHOT_FILE
+@
+text
+@a3 1
+set -o errexit
+d32 3
+d36 21
+a56 5
+declare -r xDUMP="$(type -pf dump)" xRM="/usr/bin/rm" xTEE="$(type -pf tee)" \
+	xBTRFS="$(type -pf btrfs)" xMKDIR="$(type -pf mkdir)" \
+	xMOUNT="$(type -pf mount)" xUMOUNT="$(type -pf umount)" \
+	xREALPATH="$(type -pf realpath)" xSHA="$(type -pf sha256sum)" \
+	xCP="$(type -pf cp)"
+@
+
+
+1.31
+log
+@main(): when tar SNAPSHOT_FILE exists, don't warn about it because this
+        situation is quite notmal in long cycles...
+@
+text
+@d458 10
+@
+
+
+1.30
+log
+@* main(): rever parts of commit 1.24 dealing with removing snapshot files
+          when MAX_LEV was reached.
+@
+text
+@d784 1
+a784 5
+	if [[ -f "$SNAPSHOT_FILE" ]]; then
+		echo -E "!!! Warning !!!"
+		echo -E "Found stale lev $lev tar snapshot file \"${SNAPSHOT_FILE}\", removing..."
+		_tee $xRM -v -- "$SNAPSHOT_FILE"
+	fi
+@
+
+
+1.29
+log
+@main(): do not mkdir STORAGE_MNT on taupo
+@
+text
+@d811 3
+a819 9
+echo ""
+echo -E "Saving and cleaning up metadata..."
+_tee $xCP -v -- "$STATE_FILE" "$STORAGE_DIR/0/"
+if (( lev == MAX_LEV )); then
+	_tee $xRM -v -- "$SNAPSHOT_FILE"
+else
+	_tee $xCP -v -- "$SNAPSHOT_FILE" "$STORAGE_DIR/0/"
+fi
+
+a829 1
+	
+@
+
+
+1.28
+log
+@* _none_snapshot(): do not impose mount options when mounting device under
+                    SRC_MNT because it will fail if these options don't
+                    match the existing mount;
+* main(): on taupo, do not mount storage because it is already mounted (and
+          also don't umount or remove STORAGE_DIR).
+@
+text
+@d645 3
+a647 2
+_tee $xMKDIR -v "$SRC_MNT" "$STORAGE_MNT"
+[[ "$HOSTNAME" != "$NFS_HOST" ]] && \
+d649 1
+@
+
+
+1.27
+log
+@main(): add code to verify freshly created archive
+@
+text
+@d26 2
+a27 1
+declare -r STORAGE_NFS="taupo.colorado.edu:/export/backup"
+d267 1
+a267 1
+	_tee $xMOUNT -v -o "ro,${MOUNTOPTS}" "$dev" "$SRC_MNT"
+d628 4
+a631 1
+readonly SRC_MNT="/dev/shm/backup-$b_sf" \
+d633 2
+a634 1
+readonly STORAGE_DIR="${STORAGE_MNT}/${HOST}/$backup_name" \
+d646 2
+a647 1
+_tee $xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
+d824 5
+a828 3
+echo ""
+echo -E "Unmounting storage..."
+_tee $xUMOUNT -v "$STORAGE_MNT"
+d832 3
+a834 1
+_tee /usr/bin/rmdir -v "$SRC_MNT" "$STORAGE_MNT"
+@
+
+
+1.26
+log
+@_metadata_cleanup(): purge only old snapshot files that belong to backups
+                     with the same name (but different IDs, of course).
+@
+text
+@d572 1
+d784 1
+a784 1
+# Do backup and update the state file with the new record
+d786 16
+a801 4
+echo -E \
+"$ID ${backend:0:1} $lev $UTC_TS $("_${backend}_backup" "$lev" "$rel_path")">>\
+"$STATE_FILE"
+echo -E "${backend^^} snapshot ready!"
+@
+
+
+1.25
+log
+@Embed backup name into snapshot files
+@
+text
+@d417 1
+d419 1
+a419 1
+	local f
+d424 4
+a427 2
+		[[ ("$f" =~ tar-db-.*-${ID}\.[0-9][0-9]*$) || \
+			("$f" =~ dump-db-.*-${ID}$) ]] || _tee $xRM -v -- "$f"
+d636 1
+a636 1
+#_metadata_cleanup "$backup_name"
+@
+
+
+1.24
+log
+@* Set MAX_LEV to 2;
+* _read_state(): fix a bug when all variables read from a state file end up
+                 empty. This happaned because the read builtin would reach
+                 last newline and attempt to read another line. But the latter
+                 action fails and nullifies all variables.
+
+                 We solve it by reading data into an intermediate array and
+                 then setting variables from it inside the while loop.
+
+* _metadata_cleanup(): fix a bug when we would remove state file;
+* _tar/dump/_backup(): when reading shasum, do not record "-";
+* main(): properly set the SFX parameter and remember that
+          readonly a=1 b="$a" fails -- one needs two readonly statements;
+* main(): during final cleanup, remove the snapshot file when MAX_LEV is
+          reached (this avoids warnings when checking existing snapshot files).
+@
+text
+@d423 2
+a424 2
+		[[ ("$f" =~ "tar-db-${ID}."[0-9][0-9]*$) || \
+			("$f" =~ "dump-db-${ID}"$) ]] || _tee $xRM -v -- "$f"
+d441 1
+a441 1
+		"${METADATA_DIR}/tar-db-${ID}.$(( lev - 1 ))" "$SNAPSHOT_FILE"
+d633 1
+a633 1
+_metadata_cleanup
+d756 1
+a756 1
+	b_sf="${METADATA_DIR}/${backend}-db-$ID"
+d769 1
+a769 1
+SNAPSHOT_FILE="${METADATA_DIR}/${backend}-db-$ID"
+@
+
+
+1.23
+log
+@* Bugfixes
+* Print the backup name with other info
+@
+text
+@d19 1
+a19 1
+declare -r MAX_LEV=1
+d315 1
+a315 1
+	local id x s b
+d317 1
+d322 1
+a322 1
+		while read -r id b lev x s; do
+d324 1
+d422 1
+a422 1
+		[[ ! -f "$f" ]] && continue
+d438 1
+a438 1
+	local lev="$1" path="$2" d cs
+d444 1
+a444 1
+	read -r cs < <(/usr/bin/tar --xattrs -jpc \
+d452 1
+a452 1
+	local lev="$1" path="$2" d cs
+d455 2
+a456 1
+	read -r cs < <($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" |\
+d700 2
+a701 2
+readonly UTC_TS="$(/usr/bin/date "+%s")" \
+	SFX="${UTC_TS}-$ID"
+a786 3
+# Save the state file and snapshot data to the backup host
+_tee $xCP -v -- "$STATE_FILE" "$SNAPSHOT_FILE" "$STORAGE_DIR/0/"
+
+d789 2
+d792 9
+@
+
+
+1.22
+log
+@* Add another global parameter xCP for /usr/bin/cp;
+* Include backup name in STATE_FILE;
+* Add a new function, _dump_snapshot();
+* Finish the script (at least tentatively) with the cleanup routine.
+@
+text
+@d331 2
+a332 1
+		{echo -E "... Current cycle ID is \"${id}\". The last backup at"
+d420 1
+d619 3
+a621 3
+lev="$(_rnd_alnum 15)"
+readonly SRC_MNT="/dev/shm/backup-$lev" \
+	STORAGE_MNT="/dev/shm/storage-$lev"
+d704 1
+d773 1
+@
+
+
+1.21
+log
+@* Remove SALT global parameter that contained machine-id. It was only used in
+  _btrfs_snapshot(), so we use /etc/machine-id there directly;
+* Introduce xTEE, xREALPATH and xSHA (sha256sum) global parameters;
+* Introduce a new global parameter STORAGE_DIR=$STORAGE_MNT/$HOST
+* _rotate_backups(): use a more approriate storage layout where incremental
+                     dumps are located under $HOST/$backup_name;
+* Introduce a new function _tar_backup() that takes incremental snapshots
+  using the tar backend;
+* _sanitize_filename() and main(): use the xREALPATH variable instead of
+                                   /usr/bin/realpath;
+* Add a new cmdline swith "-n" to supply the name of the backup. Update
+  _usage() accordingly;
+* When STATE_FILE exists but STORAGE_DIR does not, we remove STATE_FILE and
+  start a fresh cycle. It makes sense to also reset the backend read from
+  STATE_FILE;
+* When lev = -1 after _read_state(), check that STATE_FILE exists;
+* When checking previous tar.dump snapshot files, explicitly say that lev must
+  be positive (not just non-zero, although lev < 0 is not really possible at
+  this point);
+* Misc typo fixes...
+@
+text
+@d36 2
+a37 1
+	xREALPATH="$(type -pf realpath)" xSHA="$(type -pf sha256sum)"
+a43 1
+declare -r STATE_FILE="${METADATA_DIR}/state"
+d427 1
+a427 1
+# Incremental backup function using TAR
+d436 1
+a436 1
+	(( lev )) && _tee /usr/bin/cp -v -- \
+d444 1
+a444 1
+	echo -nE "$cs  ${SFX}.lev${lev}.${d}.tar.bz2"
+d447 9
+a455 5
+#
+# Incremental backup function using DUMP.
+#
+#_dump_backup() {
+#}
+d562 1
+a562 1
+	STORAGE_DIR
+d616 1
+d620 2
+a621 1
+readonly STORAGE_DIR="${STORAGE_MNT}/${HOST}/$backup_name"
+d773 21
+a793 2
+# Do the backup
+"_${backend}_backup" "$lev" "$rel_path"
+@
+
+
+1.20
+log
+@* Introduce a new function _metadata_cleanup() that so far only removes old
+  snapshot file from the metadata directory.
+@
+text
+@a31 3
+# Quasi-random salt
+declare -r SALT="$(< /etc/machine-id)"
+
+d33 2
+a34 2
+declare xTAR="$(type -pf tar)" xDUMP="$(type -pf dump)" \
+	xBTRFS="$(type -pf btrfs)", xRM="/usr/bin/rm" \
+d36 1
+a36 2
+	xMKDIR="$(type -pf mkdir)"
+readonly xTAR xDUMP xBTRFS xMOUNT xUMOUNT xMKDIR
+d137 1
+a137 1
+	local -r snap_dir="_${SALT}_backup_snapshots"
+d379 6
+a384 2
+# |   |-- 0/
+# |   |-- 1/
+a385 1
+# |   `-- MAX_CYCLES/
+d395 1
+a395 1
+	d="${STORAGE_MNT}/${HOST}/$MAX_CYCLES"
+a400 1
+	d="${STORAGE_MNT}/${HOST}"
+d402 1
+a402 1
+		x="${d}/$i"
+d404 1
+a404 1
+			_tee /usr/bin/mv -v -- "$x" "${d}/$(( i + 1 ))"
+d406 1
+a406 1
+	_tee $xMKDIR -v "${d}/0"
+d412 1
+a412 1
+# Clean up the metadata directory.
+d427 1
+a427 1
+# Incremental backup function using TAR.
+d429 17
+a445 3
+#_tar_backup() {
+#	local lev="$1" path="$2"
+#}
+d459 1
+a459 1
+# Return: filename with prepended "./"
+d466 1
+a466 1
+	echo -nE "$(/usr/bin/realpath "$f")"
+d540 1
+a540 1
+	echo "Usage: td-snapshot.sh [-t tar|dump] -p <path>"
+d545 2
+d557 2
+a558 1
+	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf SNAPSHOT_FILE
+d562 1
+a562 1
+while getopts "t:p:h" arg; do
+d577 3
+d594 7
+d611 1
+d615 1
+d635 1
+a635 1
+if [[ ! -d "${STORAGE_MNT}/${HOST}/0" ]]; then
+d642 1
+d644 1
+a644 1
+	_tee $xMKDIR -vp "${STORAGE_MNT}/${HOST}/0"
+d651 1
+a651 1
+		_tee $xRM -v -- "$STATE_FILE"
+d723 1
+a723 1
+	if [[ ("$(/usr/bin/realpath "$rel_path")" == "$SRC_MNT") && \
+d740 1
+a740 1
+if (( lev )); then
+d758 1
+a758 1
+if [[ "$backend" == tar ]]; then
+d762 1
+a762 1
+		echo -E "Found stale lev $lev snapshot file \"${SNAPSHOT_FILE}\", removing..."
+d767 2
+@
+
+
+1.19
+log
+@* Since we use rm(1) quite  alot, store /usr/bin/rm in a variable xRM;
+* Introduce yet another parameter SNAPSHOT_FILE that contains filename with
+  tar or dump state for building incremental backups;
+* Add logic to truncate the main state file: basically, whenever we revert to
+  lev 0 dump, the state file in ${METADATA_DIR}/state must be removed;
+* Add logic to select backend based on the information provided in the state
+  file and on the cmdline. OOPS, IGNORE THIS -- IT WAS DONE ON PREV COMMIT!!!
+* Write checks for the previous-level snapshot file. If it doesn't exist, we
+  assume that things broke and revert to lev 0 (and remove the main state file);
+* Set up the SNAPSHOT_FILE var.
+@
+text
+@d414 15
+d445 1
+d593 3
+@
+
+
+1.18
+log
+@* Do not use default values for xDUMP and xBTRFS because their null values
+  can be used as a meaningful test;
+* _read_state(): add backend information:
+   - add the backend field (= t/d for tar/dump) into the state file;
+   - read this value and retun it as a part of the compund string;
+* Use the backend info from _read_state() to determine which backend to use. The
+  logic is that we keep the backend used in the previous dump within a cycle,
+  but allow switching backends across cycles.
+* Abort if we are backing up a btrfs FS but btrfs-progs is not installed.
+@
+text
+@d37 1
+a37 1
+	xBTRFS="$(type -pf btrfs)" \
+d227 1
+a227 1
+		_tee /usr/bin/rm -vf "$loop_img"
+d399 1
+a399 1
+		_tee /usr/bin/rm -vr -- "$d"
+d527 1
+a527 1
+	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf
+d593 3
+a595 2
+		echo -E "Assuming that previous backups are lost and reverting"
+		echo -E "to a level 0 dump."
+d600 2
+d604 1
+a668 1
+
+d685 1
+d687 33
+@
+
+
+1.17
+log
+@* _read_state():
+   - Change the state file format to include sha256sum and filename instead of
+     human-readable timestamp;
+   - Get the human-readable timestamo from UTC TS entry;
+* main():
+   - Pritn a huge warning if the state file exists, but the backup directory
+     tree does not. In this case, we unconditionally revert to level 0.
+@
+text
+@d35 1
+a35 3
+# Frequently used commands... ALl systems are expected to have tar, mount,
+# umount and mkdir, but not necessarily btrfs, dump or lvs. If they are not
+# present, we replace them with /bin/false to fail subsequent checks.
+a39 2
+: "${xDUMP:=/bin/false}"
+: "${xBTRFS:=/bin/false}"
+d303 2
+a304 1
+# <ID> <level> <UTC timestamp> <sha256sum of the backup> <filename of archive>
+d306 3
+a308 3
+# 2312f5635ef572c 0 1543961163 <sha256sum> <fn>
+# 2312f5635ef572c 1 1543981163 <sha256sum> <fn>
+# 2312f5635ef572c 2 1543981180 <sha256sum> <fn>
+d310 2
+d316 2
+a317 1
+#		a new cycle will start at level 0).
+d319 1
+a319 1
+	local id x s
+d325 1
+a325 1
+		while read -r id lev x s; do
+d328 5
+d335 2
+a336 2
+		{echo -E "... Current cycle ID is \"${id}\". The last backup"
+		 echo -E "... at level $lev was taken on ${x}."
+d340 4
+a343 2
+			# We need to start a new cycle. The special value
+			# lev = -1 indicates rotation of backups.
+d346 1
+d374 1
+a374 1
+	echo -nE "${id}#${lev}"
+d414 13
+d527 1
+a527 1
+	subvol_name ID SFX SRC_MNT STORAGE_MNT
+a550 1
+
+d575 1
+a575 1
+IFS="#" read -r ID lev <<< "$(_read_state)"
+d629 6
+d661 22
+@
+
+
+1.16
+log
+@* Add a new global constant for the hostname;
+* _initial_metadata_setup(): use _tee()) when calling system commands;
+* _read_state(): refactor status messages;
+* Add a new function, _rotate_backups(), to do backup rotation;
+* main():
+   - slightly refactor variables and constants;
+   - Add a bit of backup logic;
+   - Add more status messages.
+@
+text
+@d307 1
+a307 1
+# <ID> <level> <UTC timestamp> <human-readable date>
+d309 3
+a311 3
+# 2312f5635ef572c 0 1543961163 Tue Dec  4 22:06:03 UTC 2018
+# 2312f5635ef572c 1 1543981163 Wed Dec  5 03:39:23 UTC 2018
+# 2312f5635ef572c 2 1543981180 Wed Dec  5 03:39:40 UTC 2018
+d319 1
+a319 1
+	local id x
+d325 1
+a325 1
+		while read -r id lev x x; do
+d329 1
+d570 6
+d577 1
+@
+
+
+1.15
+log
+@* Rename _initial_setup() to _initial_metadata_setup() because we will create
+  SRC_MNT in the main program;
+* Add backup storage parameters, STORAGE_NFS and STORAGE_MNT
+* Determine ID and SFX by reading state file via _read_state();
+* add more comments in the main program.
+@
+text
+@d57 2
+a58 2
+# Timestamp of this backup
+declare -r UTC_TS="$(/usr/bin/date "+%s")"
+d294 1
+a294 1
+			$xBTRFS subvolume create "$METADATA_DIR"
+d296 1
+a296 1
+			$xMKDIR -v "$METADATA_DIR"
+d329 3
+a331 1
+		echo -E "     Current cycle ID is \"${id}\". The last backup at level $lev was taken on ${x}." 1>&2
+d339 1
+a339 1
+			echo -E "     Present cycle ended -- starting a new one." 1>&2
+d345 1
+a345 1
+			echo -E "     Max level reached -- continuing the cycle with level 1" 1>&2
+d351 1
+a351 1
+			echo -E "     Continuing this cycle with level ${lev} ." 1>&2
+d361 1
+a361 1
+		echo -E "     State file is missing. Starting a new cycle with ID = $id ." 1>&2
+d369 36
+d505 2
+a506 1
+	subvol_name lev ID SFX SRC_MNT STORAGE_MNT
+a545 3
+# Read the state file
+IFS="#" read -r ID lev <<< "$(_read_state)"
+
+a546 1
+# 	SFX = common unique suffix for dir names
+d549 7
+a555 4
+SFX="${UTC_TS}-$ID"
+SRC_MNT="/dev/shm/backup-$SFX"
+STORAGE_MNT="/dev/shm/storage-$SFX"
+readonly ID SFX SRC_MNT STORAGE_MNT
+d558 2
+a559 2
+$xMKDIR -v "$SRC_MNT" "$STORAGE_MNT"
+$xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
+d565 11
+a575 1
+
+d601 6
+d608 2
+a609 2
+echo -E "Timestamp: $UTC_TS"
+echo -E "ID: $ID"
+d611 1
+@
+
+
+1.14
+log
+@* Rename METADATA_DIR to /var/lib/td-backup to avoid possible name conflicts;
+* Introduce an additional global variable STATE_FILE to keep track of the state
+  of the backup routine. This file is located under METADATA_DIR;
+* _lvm_snapshot(): use a variable, xLOSETUP for the losetup(8) binary;
+* _Intriduce a new function, _read_state() to import state from STATE_FILE;
+* Describe parameters of the backup routine.
+@
+text
+@d25 3
+d57 3
+d283 1
+a283 1
+_initial_setup() {
+d286 1
+a286 2
+	echo -E "+++ Creating metadata directory \"$METADATA_DIR\" and the mountpoint for"
+	echo -E "+++ backup source at \"$SRC_MNT\"..."
+a299 3
+	# Create the protected mountpoint for snapshots or ro mounts
+	$xMKDIR -v "$SRC_MNT"
+
+d465 1
+a465 9
+# Unique ID and timestamp of this backup
+declare -r ID="$(_rnd_alnum 15)" \
+	UTC_TS="$(/usr/bin/date '+%s')"
+declare -r SFX="${UTC_TS}-$ID"
+
+# Mountpoint for the dir to be backed up
+declare -r SRC_MNT="/dev/shm/backup-$SFX"
+
+# This is just to keep track of variables
+d467 1
+a467 1
+	subvol_name
+d500 32
+a531 2
+# Do some initial checks and setup
+_initial_setup
+@
+
+
+1.13
+log
+@_sanitize_filename(): repalce readlink(1) with realpath(1)
+@
+text
+@d8 18
+d47 2
+a48 1
+declare -r METADATA_DIR="/var/lib/backup"
+d200 1
+d211 1
+a211 1
+			<(/usr/sbin/losetup -j "$loop_img")
+d214 1
+a214 1
+		loop_dev="$(/usr/sbin/losetup --show -f "$loop_img")"
+d224 1
+a224 1
+		_tee /usr/sbin/losetup -d "$loop_dev"
+d300 62
+@
+
+
+1.12
+log
+@* _btrfs_snapshot(): fix a bug in the logic;
+* _*_snapshot(): remove checks for the correct mode;
+* _initial_setup(): refactor status messages slightly;
+* _tee(): add an empty line before echo'ed command;
+* main: use a separate declare call for derivative variables because things
+  like declare a=1 b="$a" don't work.
+@
+text
+@d294 1
+a294 1
+	echo -nE "$(/usr/bin/readlink -f "$f")"
+@
+
+
+1.11
+log
+@* _lvm_snapshot():
+  - fix a bug when a status message in the creation path would be printed to
+    stdout instead of stderr
+  - in the destroy path print all status messages to stdout because we don't
+    rely on the return variables in this case (it is consistend with other
+    _*snapshot functions)
+* Introduce _none_snapshot() that makes a ro mount of the backup target at
+  $SRC_MNT
+@
+text
+@d122 15
+a142 5
+	# If necessary, make a subvolume for future snapshots
+	[[ ! -d "${SRC_MNT}/$snap_dir" ]] && \
+		_tee $xBTRFS subvolume create "${SRC_MNT}/$snap_dir"
+
+	# We are done and want to destroy the snapshot
+a143 7
+		echo -E "+++ Dismantling BTRFS snapshot \"${snap_name}\"..."
+
+		# Remember that after calling "_btrfs_snapshot create",
+		# "$SRC_MNT" is a mountpoint for the *snapshot*, so we umount
+		# it first, then mount the full device and delete the snapshot.
+		_tee $xUMOUNT -v "$SRC_MNT"
+		_tee $xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT"
+d147 1
+a147 1
+		echo -E "--- BTRFS snapshot destroyed"
+d152 3
+a154 9
+	# Check that we want to create the snapshot (and abort otherwise)
+	if [[ "x$mode" != "xcreate" ]]; then
+		echo -E "_btrfs_snapshot(): $mode can be only \"create\" or \"destroy\""
+		exit 1
+	fi
+	echo -E "+++ Making and mounting btrfs snapshot..." 1>&2
+
+	# Mount the entire BTRFS device "$dev"
+	_tee $xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT"
+d212 1
+a212 5
+	# Check that we want to create the snapshot (and abort otherwise)
+	if [[ "x$mode" != "xcreate" ]]; then
+		echo -E "_lvm_snapshot(): $mode can be only \"create\" or \"destroy\""
+		exit 1
+	fi
+d238 1
+d246 1
+a246 6
+	# Check that we want to create the snapshot (and abort otherwise)
+	if [[ "x$mode" != "xcreate" ]]; then
+		echo -E "_none_snapshot(): $mode can be only \"create\" or \"destroy\""
+		exit 1
+	fi
+
+d260 2
+a261 2
+	echo -E "+++ Creating metadata directory \"$METADATA_DIR\" and the"
+	echo -E "+++ mountpoint for backup source at \"$SRC_MNT\"..."
+d292 3
+a294 4
+        [[ x"${f#-}" == x"$f" ]] || f="./$f"
+        [[ x"${f##*/}" == x"$f" ]] && f="./$f"
+
+        echo -nE "$f"
+d361 1
+d383 2
+a384 2
+	UTC_TS="$(/usr/bin/date '+%s')" \
+	SFX="${utc_ts}-$id"
+@
+
+
+1.10
+log
+@* _lvm_snapshot(): use an explicit variable for the operation mode;
+* _Finish _btrfs_snapshot();
+* Unmount the snapshot from inside _*_snapshot()
+* main(): ignore changes to the snap_type -- related logic (they will be
+  rolled back on th enext commit)
+@
+text
+@d202 1
+a202 1
+		echo -E "+++ Dismantling LVM snapshot \"${vg}/${snap_name}\"..." 1>&2
+d210 1
+a210 1
+		echo -E "--- LVM snapshot destroyed" 1>&2
+d231 31
+a261 1
+	echo -E "--- LVM snapshot \"${vg}/${snap_name}\" mounted at \"${SRC_MNT}\""
+d451 1
+a451 1
+	snap_type="btrfs_snapshot"
+d453 3
+a455 1
+	snap_type="lvm_snapshot"
+d470 1
+a470 1
+subvol_name="$("_${snap_type:-:}" "create" "$device" "$subvol_id")"
+@
+
+
+1.9
+log
+@* Fix a bug when computing $rel_path. When $subvol_name was non-empty, we
+  try to remove it from the relative path read from /proc/self/mountinfo.
+  However, the latter field may be of the form /xxx (without trailing /). In
+  this case, the string removal would fail because the pattern contained the
+  trailing /. Hence, we use as a pattern simply $subvol_name. In the worst
+  case scenario, this will make $rel_path contain a sequence of two / (e.g.
+  "/a/b/c//d"), but it's ok.
+* Introduce an additinal argument for the snapshot functions
+  ${snap_type}_snapshot() which indicates whether the snapshot should be
+  created or destroyed.
+* Introduce a function _tee() that echoes the commands being executed to
+  stderr. This will enable us perform easy dry runs by modifying only _tee().
+* Because of _tee(), we can start removing x-type variables for executables,
+  e.g. rarely-used xLVS etc.
+* Finish _lvm_snapshot()
+@
+text
+@d114 3
+a116 2
+# Input: $1 = device
+# 	$2 = subvolid
+d119 1
+a119 1
+	local dev="$1" subvolid="$2" name
+a121 5
+	echo -E "+++ Making and mounting btrfs snapshot..." 1>&2
+
+	# Mount the entire BTRFS device "$dev"
+	$xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT" 1>&2
+
+d126 1
+d130 28
+a157 1
+		$xBTRFS subvolume create "${SRC_MNT}/$snap_dir" 1>&2
+d160 7
+a166 9
+	subvolid="backup-snapshot-${name:-"id5"}-$SFX"
+	$xBTRFS subvolume snapshot -r "${SRC_MNT}/$name" \
+		"${SRC_MNT}/${snap_dir}/$subvolid" 1>&2
+
+	# Mount the snapshot (by its ID)
+	subvolid="$(_btrfs_idname "id" "$subvolid" "$SRC_MNT")"
+	$xUMOUNT -v "$SRC_MNT" 1>&2
+	$xMOUNT -v -o "ro,${MOUNTOPTS},subvolid=$subvolid" "$dev" \
+		"$SRC_MNT" 1>&2
+d168 1
+a168 1
+	echo -E "--- snapshot ID $subvolid mounted at $SRC_MNT" 1>&2
+d183 1
+a183 1
+	local dev="$2" lv vg loop_img loop_dev snap_name x
+d201 1
+a201 1
+	if [[ "x$1" == "xdestroy" ]]; then
+d203 1
+d216 2
+a217 2
+	if [[ "x$1" != "xcreate" ]]; then
+		echo -E "_lvm_snapshot(): $1 can be only \"create\" or \"destroy\""
+d421 1
+a421 1
+	snap_type="btrfs"
+d423 1
+a423 3
+	snap_type="lvm"
+else
+	snap_type="none"
+d438 1
+a438 1
+subvol_name="$("_${snap_type}_snapshot" "create" "$device" "$subvol_id")"
+@
+
+
+1.8
+log
+@* Fix the definition of SRC_MNT -- it must be defined after $SFX, bnot before
+* Account for situations when things like lvs might be absent by assigning
+  the default value of /bin/false. In this case, we fail the relevant conditionals;
+* Start _lvm_snapshot()
+@
+text
+@d18 1
+a18 1
+	xBTRFS="$(type -pf btrfs)" xLVS="$(type -pf lvs)" \
+d23 1
+a23 2
+: "${xLVS:=/bin/false}"
+readonly xTAR xDUMP xBTRFS xLVS xMOUNT xUMOUNT xMKDIR
+d158 2
+a159 1
+# Input: $1 = device
+d161 1
+a161 1
+	local dev="$1" lv vg
+d165 33
+a197 1
+		<($xLVS --noheadings -o lvname,vgname "$device")
+d199 8
+a206 1
+	# 
+d208 2
+a209 1
+	echo -nE "$lv"
+d315 9
+d399 1
+a399 1
+elif $xLVS "$device" &> /dev/null; then
+d417 1
+a417 1
+subvol_name="$("_${snap_type}_snapshot" "$device" "$subvol_id")"
+d419 1
+a419 1
+	rel_path="${SRC_MNT}/${rel_path#/${subvol_name}/}"
+@
+
+
+1.7
+log
+@* Get rid of the DEBUG flag and print verbose info unconditionally (we use
+  stderr for output from within functions because stdout is reserved for
+  return variables)
+* When computing rel_path, use ${mnt_point} instead of ${mnt_point}/ because
+  the latter may be / (if / is the closest mountpoint)
+@
+text
+@d14 11
+a24 7
+# Frequently used commands
+declare -r xTAR="$(type -pf tar)" \
+	xDUMP="$(type -pf dump)" \
+	xBTRFS="$(type -pf btrfs)" \
+	xMKDIR="$(type -pf mkdir)" \
+	xMOUNT="$(type -pf mount)" \
+	xUMOUNT="$(type -pf umount)"
+a28 3
+# Mountpoint for the dir to be backed up
+declare -r SRC_MNT="/dev/shm/backup-$SFX"
+
+d159 1
+a159 1
+# Input: 
+d161 9
+d178 2
+d189 1
+a189 1
+			$xMKDIR "$METADATA_DIR"
+d194 1
+a194 1
+	$xMKDIR "$SRC_MNT"
+d196 1
+d295 3
+d334 1
+a334 1
+#_initial_setup
+a347 2
+# Note: if lvs(8) is not found, then LVM is not installed and we can't do
+# snapshots. Therefore, we treat this situation as if the device is raw.
+d350 1
+a350 1
+elif /usr/bin/lvs "$device" &> /dev/null; then
+@
+
+
+1.6
+log
+@* _btrfs_snapshot():
+   - silence btrfs commands because the function will return the snapshot
+     name via stdout;
+   - return the name of the snapshot instead of its subvolid;
+* Add more debugging output
+@
+text
+@a24 3
+# Debug: 0 - silent; > 0 - be verbose
+declare -r DEBUG=1
+
+d121 2
+d124 1
+a124 1
+	$xMOUNT -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT"
+d133 1
+a133 1
+		$xBTRFS subvolume create "${SRC_MNT}/$snap_dir" 1> /dev/null
+d138 1
+a138 1
+		"${SRC_MNT}/${snap_dir}/$subvolid" 1> /dev/null
+d142 3
+a144 2
+	$xUMOUNT "$SRC_MNT"
+	$xMOUNT -o "ro,${MOUNTOPTS},subvolid=$subvolid" "$dev" "$SRC_MNT"
+d146 1
+d343 9
+a351 12
+if (( DEBUG )); then
+	echo -E "Timestamp: $UTC_TS"
+	echo -E "ID: $ID"
+	echo -E "Backup target: \"${dir}\""
+	[[ "$subvol_id" != "0" ]] && echo -E "Parent subvolume ID: $subvol_id"
+	echo -E "Closest mountpoint: \"${mnt_point}\""
+	echo -E "Path within parent device: \"${rel_path}\""
+	echo -E "Device: $device"
+	echo -E "Snapshots: $snap_type"
+	echo ""
+fi
+exit 0
+a353 5
+if (( DEBUG )); then
+	[[ "$snap_type" != "none" ]] && \
+		echo -E "+++ Making and mounting $snap_type snapshot..."
+fi
+
+d360 1
+a360 7
+rel_path="${rel_path}/${dir#${mnt_point}/}"
+
+if (( DEBUG )); then
+	[[ "$snap_type" != "none" ]] && \
+		echo -E "--- snapshot $subvol_name mounted at $SRC_MNT"
+	echo ""
+fi
+@
+
+
+1.5
+log
+@Replace calls to cat(1), tr(1) and head(1) with a bash-only function
+_rnd_alnum() that generates a given-length random lower-case alnum string.
+@
+text
+@d134 1
+a134 1
+		$xBTRFS subvolume create "${SRC_MNT}/$snap_dir"
+d139 1
+a139 1
+		"${SRC_MNT}/${snap_dir}/$subvolid"
+d146 1
+a146 1
+	echo -nE "$subvolid"
+d351 1
+d356 5
+d368 6
+@
+
+
+1.4
+log
+@Replace stat --printf=%m with a pure bash implementation
+_closest_mountpoint() because stat(1) is unreliable on btrfs.
+@
+text
+@a27 5
+# Unique ID and timestamp of this backup
+declare -r ID="$(/usr/bin/cat /dev/urandom | /usr/bin/tr -cd '[:alnum:]' | /usr/bin/head -c 10)" \
+	UTC_TS="$(/usr/bin/date '+%s')" \
+	SFX="${utc_ts}-$id"
+
+d237 24
+d275 5
+@
+
+
+1.3
+log
+@Fix a typo in comments
+@
+text
+@a17 1
+	xSTAT="$(type -pf stat)" \
+d176 1
+a176 1
+			"$(_mnt2info "$($xSTAT --printf=%m /var/lib)")"
+d219 23
+d296 1
+a296 1
+mnt_point="$($xSTAT --printf=%m "$dir")"
+@
+
+
+1.2
+log
+@* Add a new function _btrfs_idname() to compute characteristics of a BTRFS
+  subvolume: ID by name or vice versa;
+* _btrfs_snapshot(): fix a bug when mounting the snapshot and code cleanups;
+* Add comments about _lvm_snapshot()
+@
+text
+@d280 1
+a280 1
+#   remeber that the root btrfs FS is also a subvolume with ID = 5), we will
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d87 34
+d125 1
+d127 1
+a127 2
+	local dev="$1" s="$2" name snap_name
+	local -a a
+d133 4
+a136 8
+	# For our subvolid "$s" (!= 5), find the corresponding name. The
+	# subvol_id = 5 does not show up in the list and "$name" is unset.
+	if [[ "$s" != "5" ]]; then
+		while read -ra a; do
+			[[ "${a[1]}" == "$s" ]] && break
+		done < <($xBTRFS subvolume list "$SRC_MNT")
+		name="${a[-1]}"
+	fi
+d143 1
+a143 1
+	snap_name="backup-snapshot-${name:-"id5"}-$SFX"
+d145 1
+a145 1
+		"${SRC_MNT}/${snap_dir}/$snap_name"
+d147 2
+d150 1
+a150 1
+	$xMOUNT -o "ro,${MOUNTOPTS},subvol=$snap_name" "$dev" "$SRC_MNT"
+d152 1
+a152 1
+	echo -nE "$name"
+d157 5
+d163 1
+a165 1
+
+@
