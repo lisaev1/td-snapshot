@@ -317,12 +317,12 @@ _initial_metadata_setup() {
 #
 # Determine state of the backup routine by reading "${METADATA_DIR}/state" if
 # present. The state file has a space/tab-separated (dump-like) format:
-# <ID> <tar/dump backend> <level> <UTC timestamp> <sha256sum of backup>
-# <filename of the backup archive>
+# <ID> <tar/dump backend> <level> <UTC timestamp> <branch id>
+# 	<sha256sum of backup> <filename of the backup archive>
 # For example:
-# 2312f5635ef572c t 0 1543961163 <sha256sum> <fn>
-# 2312f5635ef572c t 1 1543981163 <sha256sum> <fn>
-# 2312f5635ef572c t 2 1543981180 <sha256sum> <fn>
+# 2312f5635ef572c t 0 1543961163 0000 <sha256sum> <fn>
+# 2312f5635ef572c t 1 1543981163 014a <sha256sum> <fn>
+# 2312f5635ef572c t 2 1543981180 014a <sha256sum> <fn>
 # ...
 # Clearly, the backend shouldn't change within a cycle, but it can be different
 # for different cycles.
@@ -331,19 +331,19 @@ _initial_metadata_setup() {
 #	id = backup ID (either generated or read from the state file);
 #	lev = level of the backup to continue with (special value -1 means that
 #		a new cycle will start at level 0);
-#	b = "tar" or "dump" backend used to take prev snapshot.
+#	b = "tar" or "dump" backend used to take prev snapshot;
+#	br = branch ID used to group together related dumps with lev >= 1.
 _read_state() {
-	local id x b
+	local id x b br
 	local -i lev n
 	local -a a
 
-	b=""
 	echo -E "+++ Parsing the state file at \"${STATE_FILE}\"..." 1>&2
 	if [[ -f "$STATE_FILE" ]]; then
 		n=0
 		while read -ra a; do
 			(( ++n ))
-			read -r id b lev x <<< "${a[@]:0:4}"
+			read -r id b lev x br <<< "${a[@]:0:5}"
 		done < "$STATE_FILE"
 		if [[ "$b" == "t" ]]; then
 			b="tar"
@@ -362,21 +362,17 @@ _read_state() {
 			# special value lev = -1 indicates rotation of backups.
 			# We also unset the backend variable to cover cases
 			# when a user wants to switch backend in the new cycle.
-			id="$(_rnd_alnum 15)"
 			(( lev = -1 ))
-
 			echo -E "... Present cycle ended, starting a new one" 1>&2
 		elif (( lev >= MAX_LEV )); then
 			# We reached the max level and return back to level 1.
 			# The ID is the same as the last backup.
 			lev=1
-
 			echo -E "... Max level reached, proceeding with lev 1" 1>&2
 		else
 			# Otherwise, just increment the last level value,
 			# keeping the same ID.
 			(( ++lev ))
-
 			echo -E "... Continuing cycle with lev ${lev}" 1>&2
 		fi
 	else
@@ -384,14 +380,19 @@ _read_state() {
 		# to -1 to indicate rotation of backups that may exist, because
 		# such situation would be common when an OS is reinstalled and
 		# state files are lost but backups are present).
-		id="$(_rnd_alnum 15)"
 		(( lev = -1 ))
-
-		echo -E "... State file not found. Starting a new cycle with ID = $id ." 1>&2
+		echo -E "... State file not found, starting a new cycle." 1>&2
 	fi
 	echo -E "--- Finished reading state file." 1>&2
 
-	echo -nE "${id}#${lev}#$b"
+	if (( lev == -1 )); then
+		id="$(_rnd_alnum 15)"
+		b=""
+		br="0000"
+	elif (( lev == 1 )); then
+		br="$(_rnd_alnum 4)."
+	fi
+	echo -nE "${id}#${lev}#${b}#$br"
 }
 
 #
@@ -459,25 +460,25 @@ _metadata_cleanup() {
 # Output: a shasum-formatted string:
 #	"sha256sum  backup_file_name"
 _tar_backup() {
-	local lev="$1" path="$2" d cs x
+	local lev="$1" path="$2" d cs x f
 
 	(( lev )) && _tee $xCP -v -- \
 		"${SNAPSHOT_FILE%.*}.$(( lev - 1 ))" "$SNAPSHOT_FILE"
 
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
+	f="${SFX}.${BRANCH_ID}lev${lev}.${d}.tar.xz"
 	if x="$(/usr/bin/tar --xattrs -Jpc \
 		--listed-incremental="$SNAPSHOT_FILE" -f - -C "$path" . | \
-		$xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.tar.xz" | \
-		$xSHA -)"; then
+		$xTEE "${STORAGE_DIR}/0/$f" | $xSHA -)"; then
 		IFS=" -" read -r cs <<< "$x"
 	else
 		cs="$ID"
 	fi
-	echo -nE "$cs ${SFX}.lev${lev}.${d}.tar.xz"
+	echo -nE "$cs $f"
 }
 
 _dump_backup() {
-	local lev="$1" path="$2" d cs x
+	local lev="$1" path="$2" d cs x f
 
 	# dump doesn't like changing device names (e.g. lvm snapshots whose
 	# names contain timestamps). Therefore, we hack SNAPSHOT_FILE to
@@ -492,14 +493,14 @@ _dump_backup() {
 	fi
 
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
+	f="${SFX}.${BRANCH_ID}lev${lev}.${d}.dump.gz"
 	if x="$($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" | \
-		$xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.dump.gz" | \
-		$xSHA -)"; then
+		$xTEE "${STORAGE_DIR}/0/$f" | $xSHA -)"; then
 		IFS=" -" read -r cs <<< "$x"
 	else
 		cs="$ID"
 	fi
-	echo -nE "$cs ${SFX}.lev${lev}.${d}.dump.gz"
+	echo -nE "$cs $f"
 }
 
 #
@@ -607,7 +608,7 @@ _usage() {
 # Declare veriables just to keep track of them
 declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
 	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf SNAPSHOT_FILE backup_name \
-	STORAGE_DIR STATE_FILE sha1 sha2
+	STORAGE_DIR STATE_FILE sha1 sha2 BRANCH_ID
 declare -i lev
 declare -a state_data
 
@@ -674,7 +675,7 @@ readonly STORAGE_MNT STORAGE_DIR="${STORAGE_MNT}/${HOST}/$backup_name" \
 	STATE_FILE="${METADATA_DIR}/${backup_name}.state"
 
 # Read the state file
-IFS="#" read -r ID lev b_sf <<< "$(_read_state)"
+IFS="#" read -r ID lev b_sf BRANCH_ID <<< "$(_read_state)"
 readonly ID
 
 # Clean up old snapshot files that won't be used
@@ -824,10 +825,15 @@ if [[ "$backend" == "tar" ]]; then
 fi
 readonly SNAPSHOT_FILE
 
+# Set the branch id
+(( lev == 0 )) && BRANCH_ID=""
+readonly BRANCH_ID
+
 # Do backup, verify it and update the state file with the new record
 echo -E "Starting ${backend^^} level $lev snapshot..."
 read -ra state_data <<< \
-   "$ID ${backend:0:1} $lev $UTC_TS $("_${backend}_backup" "$lev" "$rel_path")"
+   "$ID ${backend:0:1} $lev $UTC_TS ${BRANCH_ID:-"0000"} \
+   $("_${backend}_backup" "$lev" "$rel_path")"
 /usr/bin/sync
 
 b_sf="${STORAGE_DIR}/0/${state_data[-1]}"
