@@ -1,4 +1,4 @@
-# A snapshot-capable backup utility that uses GNU tar(1) or dump(1)
+# A snapshot-capable backup utility that uses GNU `tar` or `dump`
 
 ## Table of contents
 0. Credits
