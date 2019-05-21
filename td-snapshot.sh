@@ -808,20 +808,14 @@ else
 	_tee $xRM -v -- "$b_sf"
 fi
 
+# Save the state file and snapshot data to the backup host
+_tee $xCP -v -- "$STATE_FILE" "$SNAPSHOT_FILE" "$STORAGE_DIR/0/"
+
 # Cleanup the snapshots, umount storage and delete mountpoints
 echo -E "!!! Cleanup !!!"
 echo ""
 
 "_${snap_type}_snapshot" "destroy" "$device" "$subvol_id"
-
-echo ""
-echo -E "Saving and cleaning up metadata..."
-_tee $xCP -v -- "$STATE_FILE" "$STORAGE_DIR/0/"
-if (( lev == MAX_LEV )); then
-	_tee $xRM -v -- "$SNAPSHOT_FILE"
-else
-	_tee $xCP -v -- "$SNAPSHOT_FILE" "$STORAGE_DIR/0/"
-fi
 
 if [[ "$HOSTNAME" != "$NFS_HOST" ]]; then
 	echo ""
@@ -833,4 +827,3 @@ echo ""
 echo -E "Removing mountpoints..."
 _tee /usr/bin/rmdir -v "$SRC_MNT"
 [[ "$HOSTNAME" != "$NFS_HOST" ]] && _tee /usr/bin/rmdir -v "$STORAGE_MNT"
-	
