@@ -781,11 +781,7 @@ fi
 SNAPSHOT_FILE="${METADATA_DIR}/${backend}-db-${backup_name}-$ID"
 if [[ "$backend" == "tar" ]]; then
 	SNAPSHOT_FILE="${SNAPSHOT_FILE}.$lev"
-	if [[ -f "$SNAPSHOT_FILE" ]]; then
-		echo -E "!!! Warning !!!"
-		echo -E "Found stale lev $lev tar snapshot file \"${SNAPSHOT_FILE}\", removing..."
-		_tee $xRM -v -- "$SNAPSHOT_FILE"
-	fi
+	[[ -f "$SNAPSHOT_FILE" ]] && _tee $xRM -v -- "$SNAPSHOT_FILE"
 fi
 readonly SNAPSHOT_FILE
 
