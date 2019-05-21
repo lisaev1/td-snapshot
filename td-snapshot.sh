@@ -119,42 +119,39 @@ _btrfs_snapshot() {
 	local mode="$1" dev="$2" subvolid="$3" snap_name name snap_id
 	local -r snap_dir="_${SALT}_backup_snapshots"
 
+	if [[ "x$mode" == "xcreate" ]]; then
+		# We want to create the snapshot
+		echo -E "+++ Making and mounting btrfs snapshot..." 1>&2
+	else
+		# We are done and want to destroy the snapshot. Remember that
+		# after calling "_btrfs_snapshot create", "$SRC_MNT" is a
+		# mountpoint for the *snapshot*, so we umount it first, then
+		# mount the full device and delete the snapshot.
+		echo -E "+++ Dismantling btrfs snapshot..."
+		_tee $xUMOUNT -v "$SRC_MNT"
+	fi
+
+	# Mount the entire BTRFS device "$dev"
+	_tee $xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT"
+
 	# For our subvolid (!= 5), find the corresponding name. The
 	# subvolid = 5 does not show up in the list and "$name" is unset.
 	[[ "$subvolid" != "5" ]] && \
 		name="$(_btrfs_idname "name" "$subvolid" "$SRC_MNT")"
 	snap_name="backup-snapshot-${name:-"id5"}-$SFX"
 
-	# If necessary, make a subvolume for future snapshots
-	[[ ! -d "${SRC_MNT}/$snap_dir" ]] && \
-		_tee $xBTRFS subvolume create "${SRC_MNT}/$snap_dir"
-
-	# We are done and want to destroy the snapshot
 	if [[ "x$mode" == "xdestroy" ]]; then
-		echo -E "+++ Dismantling BTRFS snapshot \"${snap_name}\"..."
-
-		# Remember that after calling "_btrfs_snapshot create",
-		# "$SRC_MNT" is a mountpoint for the *snapshot*, so we umount
-		# it first, then mount the full device and delete the snapshot.
-		_tee $xUMOUNT -v "$SRC_MNT"
-		_tee $xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT"
 		_tee $xBTRFS subvolume delete -C \
 			"${SRC_MNT}/${snap_dir}/$snap_name"
 		_tee $xUMOUNT -v "$SRC_MNT"
-		echo -E "--- BTRFS snapshot destroyed"
+		echo -E "--- btrfs snapshot \"${snap_name}\" destroyed"
 
 		return 0
 	fi
 
-	# Check that we want to create the snapshot (and abort otherwise)
-	if [[ "x$mode" != "xcreate" ]]; then
-		echo -E "_btrfs_snapshot(): $mode can be only \"create\" or \"destroy\""
-		exit 1
-	fi
-	echo -E "+++ Making and mounting btrfs snapshot..." 1>&2
-
-	# Mount the entire BTRFS device "$dev"
-	_tee $xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT"
+	# If necessary, make a subvolume for future snapshots
+	[[ ! -d "${SRC_MNT}/$snap_dir" ]] && \
+		_tee $xBTRFS subvolume create "${SRC_MNT}/$snap_dir"
 
 	# Snapshot our parent subvolume and mount it ro
 	_tee $xBTRFS subvolume snapshot -r "${SRC_MNT}/$name" \
@@ -212,11 +209,7 @@ _lvm_snapshot() {
 		return 0
 	fi
 
-	# Check that we want to create the snapshot (and abort otherwise)
-	if [[ "x$mode" != "xcreate" ]]; then
-		echo -E "_lvm_snapshot(): $mode can be only \"create\" or \"destroy\""
-		exit 1
-	fi
+	# If we are here, we want to create the snapshot
 	echo -E "+++ Making and mounting LVM snapshot..." 1>&2
 
 	# Initialize "$loop_dev" as a PV and include it into "$vg"
@@ -242,6 +235,7 @@ _lvm_snapshot() {
 _none_snapshot() {
 	local mode="$1" dev="$2"
 
+	# We are done and want to umount the backup target
 	if [[ "x$mode" == "xdestroy" ]]; then
 		echo -E "+++ Dismantling the ro mount at \"${SRC_MNT}\"..."
 		_tee $xUMOUNT -v "$SRC_MNT"
@@ -249,12 +243,7 @@ _none_snapshot() {
 		return 0
 	fi
 
-	# Check that we want to create the snapshot (and abort otherwise)
-	if [[ "x$mode" != "xcreate" ]]; then
-		echo -E "_none_snapshot(): $mode can be only \"create\" or \"destroy\""
-		exit 1
-	fi
-
+	# If we are here, we want to ro mount the backup target
 	echo -E "+++ Mounting ro the backup target..." 1>&2
 	_tee $xMOUNT -v -o "ro,${MOUNTOPTS}" "$dev" "$SRC_MNT"
 	echo -E "--- Backup target is mounted at \"${SRC_MNT}\"" 1>&2
@@ -268,8 +257,8 @@ _none_snapshot() {
 _initial_setup() {
 	local fs x
 
-	echo -E "+++ Creating metadata directory \"$METADATA_DIR\" and the"
-	echo -E "+++ mountpoint for backup source at \"$SRC_MNT\"..."
+	echo -E "+++ Creating metadata directory \"$METADATA_DIR\" and the mountpoint for"
+	echo -E "+++ backup source at \"$SRC_MNT\"..."
 	# Create the "$METADATA_DIR" if not present already. On a btrfs
 	# filesystem, we create a subvolume. Otherwise, a normal dir.
 	if [[ ! -d "$METADATA_DIR" ]]; then 
@@ -300,10 +289,9 @@ _sanitize_filename() {
         local f="$1"
 
 	f="${f%/}"
-        [[ x"${f#-}" == x"$f" ]] || f="./$f"
-        [[ x"${f##*/}" == x"$f" ]] && f="./$f"
-
-        echo -nE "$f"
+	[[ "x${f#-}" == "x$f" ]] || f="./$f"
+	[[ "x${f##*/}" == "x$f" ]] && f="./$f"
+	echo -nE "$(/usr/bin/readlink -f "$f")"
 }
 
 #
@@ -370,6 +358,7 @@ _rnd_alnum() {
 #
 # Input: command
 _tee() {
+	echo ""
 	echo -E "~~>  $@" 
 	"$@"
 } 1>&2
@@ -391,8 +380,8 @@ _usage() {
 
 # Unique ID and timestamp of this backup
 declare -r ID="$(_rnd_alnum 15)" \
-	UTC_TS="$(/usr/bin/date '+%s')" \
-	SFX="${utc_ts}-$id"
+	UTC_TS="$(/usr/bin/date '+%s')"
+declare -r SFX="${UTC_TS}-$ID"
 
 # Mountpoint for the dir to be backed up
 declare -r SRC_MNT="/dev/shm/backup-$SFX"
