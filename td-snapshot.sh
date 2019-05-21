@@ -828,6 +828,7 @@ readonly SNAPSHOT_FILE
 echo -E "Starting ${backend^^} level $lev snapshot..."
 read -ra state_data <<< \
    "$ID ${backend:0:1} $lev $UTC_TS $("_${backend}_backup" "$lev" "$rel_path")"
+/usr/bin/sync
 
 b_sf="${STORAGE_DIR}/0/${state_data[-1]}"
 if [[ "${state_data[-2]}" == "$ID" ]]; then
