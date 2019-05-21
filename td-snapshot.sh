@@ -34,7 +34,7 @@ declare -r SALT="$(< /etc/machine-id)"
 
 # Frequently used commands
 declare xTAR="$(type -pf tar)" xDUMP="$(type -pf dump)" \
-	xBTRFS="$(type -pf btrfs)" \
+	xBTRFS="$(type -pf btrfs)", xRM="/usr/bin/rm" \
 	xMOUNT="$(type -pf mount)" xUMOUNT="$(type -pf umount)" \
 	xMKDIR="$(type -pf mkdir)"
 readonly xTAR xDUMP xBTRFS xMOUNT xUMOUNT xMKDIR
@@ -224,7 +224,7 @@ _lvm_snapshot() {
 		_tee /usr/sbin/vgreduce -v -y "$vg" "$loop_dev"
 		_tee /usr/sbin/pvremove -v -y "$loop_dev"
 		_tee $xLOSETUP -d "$loop_dev"
-		_tee /usr/bin/rm -vf "$loop_img"
+		_tee $xRM -v -- "$loop_img"
 
 		echo -E "--- LVM snapshot destroyed"
 
@@ -396,7 +396,7 @@ _rotate_backups() {
 	d="${STORAGE_MNT}/${HOST}/$MAX_CYCLES"
 	if [[ -d "$d" ]]; then
 		echo -E "... Removing backup with number $MAX_CYCLES (= max)"
-		_tee /usr/bin/rm -vr -- "$d"
+		_tee $xRM -vr -- "$d"
 	fi
 
 	d="${STORAGE_MNT}/${HOST}"
@@ -524,7 +524,7 @@ _usage() {
 
 # Declare veriables just to keep track of them
 declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
-	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf
+	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf SNAPSHOT_FILE
 declare -i lev
 
 # Handle the arguments
@@ -590,14 +590,18 @@ if [[ ! -d "${STORAGE_MNT}/${HOST}/0" ]]; then
 	if [[ -f "$STATE_FILE" ]]; then
 		echo -E "!!! Warning !!!"
 		echo -E "State file exists, but not the backup directory tree."
-		echo -E "Assuming that previous backups are lost and reverting"
-		echo -E "to a level 0 dump."
+		echo -E "Assuming that previous backups are lost. Reverting to"
+		echo -E "level 0 dump and removing state file."
+		_tee $xRM -v -- "$STATE_FILE"
 	fi
 	_tee $xMKDIR -vp "${STORAGE_MNT}/${HOST}/0"
 	lev=0
 else
+	# Level -1 occurs if there were no state file (fresh start) or a new
+	# cycle started. In both cases, we set lev to 0 and remove state file.
 	if (( lev == -1 )); then
 		_rotate_backups
+		_tee $xRM -v -- "$STATE_FILE"
 		lev=0
 	fi
 fi
@@ -662,7 +666,6 @@ rel_path="${rel_path}/${dir#${mnt_point}}"
 #
 # Decide whether we want to use tar or dump
 #
-
 # If the previous backup used a particular backend (stored in "$b_sf"), then we
 # ignore the backend specified via the "-t" cmdline switch. If "$b_sf" is null,
 # we take the cmdline argument or set a default value for "$backend".
@@ -679,4 +682,38 @@ if [[ -z "$b_sf" ]]; then
 else
 	backend="$b_sf"
 fi
+echo ""
 echo -E "Using the $backend backend..."
+
+#
+# Checks w.r.t. tar or dump incremental backup snapshot files
+#
+# When (( lev != 0 )), we need to check if the tar or dump states used in
+# building an incremental snapshot are present
+if (( lev )); then
+	echo ""
+	echo -E "Checking presence of the previous $backend snapshot file..."
+
+	b_sf="${METADATA_DIR}/${backend}-db-$ID"
+	[[ "$backend" == "tar" ]] && b_sf="${b_sf}.$(( lev - 1 ))"
+	if [[ ! -f "$b_sf" ]]; then
+		echo -E "!!! Warning !!!"
+		echo -E "Level is ${lev}, but no lev $(( lev - 1 )) snapshot
+info found! Something went wrong..."
+		echo -E "Resetting to level 0 and purging the state file."
+		_tee $xRM -v -- "$STATE_FILE"
+		lev=0
+	fi
+fi
+
+# Specify the tar or dump snapshot filename (for dump, aka dumpdates) 
+SNAPSHOT_FILE="${METADATA_DIR}/${backend}-db-$ID"
+if [[ "$backend" == tar ]]; then
+	SNAPSHOT_FILE="${SNAPSHOT_FILE}.$lev"
+	if [[ -f "$SNAPSHOT_FILE" ]]; then
+		echo -E "!!! Warning !!!"
+		echo -E "Found stale lev $lev snapshot file \"${SNAPSHOT_FILE}\", removing..."
+		_tee $xRM -v -- "$SNAPSHOT_FILE"
+fi
+readonly SNAPSHOT_FILE
+
