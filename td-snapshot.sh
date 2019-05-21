@@ -420,8 +420,8 @@ _metadata_cleanup() {
 	# Purge old snapshot files
 	for f in "${METADATA_DIR}/"*; do
 		[[ (! -f "$f") || (! "$f" =~ -db-) ]] && continue
-		[[ ("$f" =~ "tar-db-${ID}."[0-9][0-9]*$) || \
-			("$f" =~ "dump-db-${ID}"$) ]] || _tee $xRM -v -- "$f"
+		[[ ("$f" =~ tar-db-.*-${ID}\.[0-9][0-9]*$) || \
+			("$f" =~ dump-db-.*-${ID}$) ]] || _tee $xRM -v -- "$f"
 	done
 
 	return 0
@@ -438,7 +438,7 @@ _tar_backup() {
 	local lev="$1" path="$2" d cs x
 
 	(( lev )) && _tee $xCP -v -- \
-		"${METADATA_DIR}/tar-db-${ID}.$(( lev - 1 ))" "$SNAPSHOT_FILE"
+		"${SNAPSHOT_FILE%.*}.$(( lev - 1 ))" "$SNAPSHOT_FILE"
 
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
 	read -r cs x < <(/usr/bin/tar --xattrs -jpc \
@@ -630,7 +630,7 @@ IFS="#" read -r ID lev b_sf <<< "$(_read_state)"
 readonly ID
 
 # Clean up old snapshot files that won't be used
-_metadata_cleanup
+#_metadata_cleanup "$backup_name"
 
 # Create the mountpoints and mount the storage
 _tee $xMKDIR -v "$SRC_MNT" "$STORAGE_MNT"
@@ -753,7 +753,7 @@ if (( lev > 0 )); then
 	echo ""
 	echo -E "Checking presence of the previous $backend snapshot file..."
 
-	b_sf="${METADATA_DIR}/${backend}-db-$ID"
+	b_sf="${METADATA_DIR}/${backend}-db-${backup_name}-$ID"
 	[[ "$backend" == "tar" ]] && b_sf="${b_sf}.$(( lev - 1 ))"
 	if [[ ! -f "$b_sf" ]]; then
 		echo -E "!!! Warning !!!"
@@ -766,7 +766,7 @@ info found! Something went wrong..."
 fi
 
 # Specify the tar or dump snapshot filename (for dump, aka dumpdates) 
-SNAPSHOT_FILE="${METADATA_DIR}/${backend}-db-$ID"
+SNAPSHOT_FILE="${METADATA_DIR}/${backend}-db-${backup_name}-$ID"
 if [[ "$backend" == "tar" ]]; then
 	SNAPSHOT_FILE="${SNAPSHOT_FILE}.$lev"
 	if [[ -f "$SNAPSHOT_FILE" ]]; then
