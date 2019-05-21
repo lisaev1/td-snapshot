@@ -1,6 +1,7 @@
 #!/bin/bash
 
 export LC_ALL=C
+set -o nounset
 #set -o xtrace
 
 # -----------------------------------------------------------------------------
@@ -469,8 +470,10 @@ _tar_backup() {
 		$xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.tar.xz" | \
 		$xSHA -)"; then
 		IFS=" -" read -r cs <<< "$x"
-		echo -nE "$cs ${SFX}.lev${lev}.${d}.tar.xz"
+	else
+		cs="$ID"
 	fi
+	echo -nE "$cs ${SFX}.lev${lev}.${d}.tar.xz"
 }
 
 _dump_backup() {
@@ -491,8 +494,10 @@ _dump_backup() {
 		$xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.dump.gz" | \
 		$xSHA -)"; then
 		IFS=" -" read -r cs <<< "$x"
-		echo -nE "$cs ${SFX}.lev${lev}.${d}.dump.gz"
+	else
+		cs="$ID"
 	fi
+	echo -nE "$cs ${SFX}.lev${lev}.${d}.dump.gz"
 }
 
 #
@@ -822,24 +827,32 @@ echo -E "Starting ${backend^^} level $lev snapshot..."
 read -ra state_data <<< \
    "$ID ${backend:0:1} $lev $UTC_TS $("_${backend}_backup" "$lev" "$rel_path")"
 
-echo -E "Verifying the archive..."
 b_sf="${STORAGE_DIR}/0/${state_data[-1]}"
-if echo -nE "${state_data[-2]}  $b_sf" | $xSHA -c -; then
-	echo -E "${state_data[@]}" >> "$STATE_FILE"
-
-	echo -E "${backend^^} snapshot ready!"
-	echo -E "File: ${state_data[-1]}"
-	echo -E "Checksum: ${state_data[-2]}"
-else
-	echo -E "VERIFICATION FAILED!!!"
+if [[ "${state_data[-2]}" == "$ID" ]]; then
+	echo -E "Creating archive using ${backend^^} FAILED!!!"
 	echo -E "Removing archive and aborting..."
 	_tee $xRM -v -- "$b_sf"
+else
+	echo -E "Verifying the archive..."
+	if echo -nE "${state_data[-2]}  $b_sf" | $xSHA -c -; then
+		echo -E "${state_data[@]}" >> "$STATE_FILE"
+
+		echo -E "${backend^^} snapshot ready!"
+		echo -E "File: ${state_data[-1]}"
+		echo -E "Checksum: ${state_data[-2]}"
+
+		# Save the state file and snapshot data to the backup host
+		_tee $xCP -v -- "$STATE_FILE" "$SNAPSHOT_FILE" \
+			"$STORAGE_DIR/0/"
+	else
+		echo -E "VERIFICATION FAILED!!!"
+		echo -E "Removing archive and aborting..."
+		_tee $xRM -v -- "$b_sf"
+	fi
 fi
 
-# Save the state file and snapshot data to the backup host
-_tee $xCP -v -- "$STATE_FILE" "$SNAPSHOT_FILE" "$STORAGE_DIR/0/"
-
 # Cleanup the snapshots, umount storage and delete mountpoints
+echo ""
 echo -E "!!! Cleanup !!!"
 echo ""
 
