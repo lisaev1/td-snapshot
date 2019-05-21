@@ -304,11 +304,11 @@ _initial_metadata_setup() {
 #
 # Determine state of the backup routine by reading "${METADATA_DIR}/state" if
 # present. The state file has a space/tab-separated (dump-like) format:
-# <ID> <level> <UTC timestamp> <human-readable date>
+# <ID> <level> <UTC timestamp> <sha256sum of the backup> <filename of archive>
 # For example:
-# 2312f5635ef572c 0 1543961163 Tue Dec  4 22:06:03 UTC 2018
-# 2312f5635ef572c 1 1543981163 Wed Dec  5 03:39:23 UTC 2018
-# 2312f5635ef572c 2 1543981180 Wed Dec  5 03:39:40 UTC 2018
+# 2312f5635ef572c 0 1543961163 <sha256sum> <fn>
+# 2312f5635ef572c 1 1543981163 <sha256sum> <fn>
+# 2312f5635ef572c 2 1543981180 <sha256sum> <fn>
 # ...
 #
 # Output: A set of strings separated by "#":
@@ -316,16 +316,17 @@ _initial_metadata_setup() {
 #	lev = level of the backup to continue with (special value -1 means that
 #		a new cycle will start at level 0).
 _read_state() {
-	local id x
+	local id x s
 	local -i lev n
 
 	echo -E "+++ Parsing the state file at \"${STATE_FILE}\"..." 1>&2
 	if [[ -f "$STATE_FILE" ]]; then
 		n=0
-		while read -r id lev x x; do
+		while read -r id lev x s; do
 			(( ++n ))
 		done < "$STATE_FILE"
 
+		x="$(/usr/bin/date -d "@$x")"
 		{echo -E "... Current cycle ID is \"${id}\". The last backup"
 		 echo -E "... at level $lev was taken on ${x}."
 	 	} 1>&2
@@ -566,7 +567,14 @@ _tee $xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
 # directory for the current cycle. Otherwise, we check if "$lev" == -1 and
 # unconditionally rotate backups if yes.
 if [[ ! -d "${STORAGE_MNT}/${HOST}/0" ]]; then
+	if [[ -f "$STATE_FILE" ]]; then
+		echo -E "!!! Warning !!!"
+		echo -E "State file exists, but not the backup directory tree."
+		echo -E "Assuming that previous backups are lost and reverting"
+		echo -E "to a level 0 dump."
+	fi
 	_tee $xMKDIR -vp "${STORAGE_MNT}/${HOST}/0"
+	lev=0
 else
 	if (( lev == -1 )); then
 		_rotate_backups
