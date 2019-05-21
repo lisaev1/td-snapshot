@@ -328,7 +328,8 @@ _read_state() {
 		fi
 
 		x="$(/usr/bin/date -d "@$x")"
-		{echo -E "... Current cycle ID is \"${id}\". The last backup at"
+		{
+		 echo -E "... Current cycle ID is \"${id}\". The last backup at"
 		 echo -E "... level $lev was taken on ${x} using ${b}."
 	 	} 1>&2
 
@@ -416,6 +417,7 @@ _metadata_cleanup() {
 
 	# Purge old snapshot files
 	for f in "${METADATA_DIR}/"*; do
+		[[ ! -f "$f" ]] && continue
 		[[ ("$f" =~ "tar-db-${ID}."[0-9][0-9]*$) || \
 			("$f" =~ "dump-db-${ID}"$) ]] || _tee $xRM -v -- "$f"
 	done
@@ -614,9 +616,9 @@ _initial_metadata_setup
 #	STORAGE_MNT = mountpoint for the backup storage
 #	STORAGE_DIR = path to the actual backups (beneath $STORAGE_MNT)
 #	STATE_FILE = state file for this $backup_name
-lev="$(_rnd_alnum 15)"
-readonly SRC_MNT="/dev/shm/backup-$lev" \
-	STORAGE_MNT="/dev/shm/storage-$lev"
+b_sf="$(_rnd_alnum 15)"
+readonly SRC_MNT="/dev/shm/backup-$b_sf" \
+	STORAGE_MNT="/dev/shm/storage-$b_sf"
 readonly STORAGE_DIR="${STORAGE_MNT}/${HOST}/$backup_name" \
 	STATE_FILE="${METADATA_DIR}/${backup_name}.state"
 
@@ -699,6 +701,7 @@ readonly UTC_TS="$(/usr/bin/date "+%s")" \
 echo -E "Timestamp / ID: $UTC_TS / $ID"
 echo -E "Host: $HOST"
 echo -E "Backup target: \"${dir}\""
+echo -E "Backup name: \"${backup_name}\""
 echo -E "Level: $lev"
 [[ "$subvol_id" != "0" ]] && echo -E "Parent subvolume ID: $subvol_id"
 echo -E "Closest mountpoint: \"${mnt_point}\""
@@ -767,6 +770,7 @@ if [[ "$backend" == "tar" ]]; then
 		echo -E "!!! Warning !!!"
 		echo -E "Found stale lev $lev tar snapshot file \"${SNAPSHOT_FILE}\", removing..."
 		_tee $xRM -v -- "$SNAPSHOT_FILE"
+	fi
 fi
 readonly SNAPSHOT_FILE
 
