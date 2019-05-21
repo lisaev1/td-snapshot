@@ -131,19 +131,19 @@ _btrfs_snapshot() {
 
 	# If necessary, make a subvolume for future snapshots
 	[[ ! -d "${SRC_MNT}/$snap_dir" ]] && \
-		$xBTRFS subvolume create "${SRC_MNT}/$snap_dir"
+		$xBTRFS subvolume create "${SRC_MNT}/$snap_dir" 1> /dev/null
 
 	# Snapshot our parent subvolume and mount it ro
 	subvolid="backup-snapshot-${name:-"id5"}-$SFX"
 	$xBTRFS subvolume snapshot -r "${SRC_MNT}/$name" \
-		"${SRC_MNT}/${snap_dir}/$subvolid"
+		"${SRC_MNT}/${snap_dir}/$subvolid" 1> /dev/null
 
 	# Mount the snapshot (by its ID)
 	subvolid="$(_btrfs_idname "id" "$subvolid" "$SRC_MNT")"
 	$xUMOUNT "$SRC_MNT"
 	$xMOUNT -o "ro,${MOUNTOPTS},subvolid=$subvolid" "$dev" "$SRC_MNT"
 
-	echo -nE "$subvolid"
+	echo -nE "$name"
 }
 
 #
@@ -348,10 +348,16 @@ if (( DEBUG )); then
 	echo -E "Path within parent device: \"${rel_path}\""
 	echo -E "Device: $device"
 	echo -E "Snapshots: $snap_type"
+	echo ""
 fi
 exit 0
 
 # Create a shapshot
+if (( DEBUG )); then
+	[[ "$snap_type" != "none" ]] && \
+		echo -E "+++ Making and mounting $snap_type snapshot..."
+fi
+
 subvol_name="$("_${snap_type}_snapshot" "$device" "$subvol_id")"
 if [[ -n "$subvol_name" ]]; then
 	rel_path="${SRC_MNT}/${rel_path#/${subvol_name}/}"
@@ -359,3 +365,9 @@ else
 	rel_path="${SRC_MNT}/${rel_path#/}"
 fi
 rel_path="${rel_path}/${dir#${mnt_point}/}"
+
+if (( DEBUG )); then
+	[[ "$snap_type" != "none" ]] && \
+		echo -E "--- snapshot $subvol_name mounted at $SRC_MNT"
+	echo ""
+fi
