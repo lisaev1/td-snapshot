@@ -411,6 +411,21 @@ _rotate_backups() {
 }
 
 #
+# Clean up the metadata directory.
+#
+_metadata_cleanup() {
+	local f
+
+	# Purge old snapshot files
+	for f in "${METADATA_DIR}/"*; do
+		[[ ("$f" =~ "tar-db-${ID}."[0-9][0-9]*$) || \
+			("$f" =~ "dump-db-${ID}"$) ]] || _tee $xRM -v -- "$f"
+	done
+
+	return 0
+}
+
+#
 # Incremental backup function using TAR.
 #
 #_tar_backup() {
@@ -427,6 +442,7 @@ _rotate_backups() {
 # Sanitize paths
 #
 # Avoid common cases when the dir name starts with "-", etc.
+#
 # Input: $1 = filename to sanitize
 # Return: filename with prepended "./"
 _sanitize_filename() {
@@ -574,6 +590,9 @@ readonly SRC_MNT="/dev/shm/backup-$lev" \
 # Read the state file
 IFS="#" read -r ID lev b_sf <<< "$(_read_state)"
 readonly ID
+
+# Clean up old snapshot files that won't be used
+_metadata_cleanup
 
 # Create the mountpoints and mount the storage
 _tee $xMKDIR -v "$SRC_MNT" "$STORAGE_MNT"
