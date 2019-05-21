@@ -15,13 +15,12 @@ declare -r SALT="$(< /etc/machine-id)"
 # umount and mkdir, but not necessarily btrfs, dump or lvs. If they are not
 # present, we replace them with /bin/false to fail subsequent checks.
 declare xTAR="$(type -pf tar)" xDUMP="$(type -pf dump)" \
-	xBTRFS="$(type -pf btrfs)" xLVS="$(type -pf lvs)" \
+	xBTRFS="$(type -pf btrfs)" \
 	xMOUNT="$(type -pf mount)" xUMOUNT="$(type -pf umount)" \
 	xMKDIR="$(type -pf mkdir)"
 : "${xDUMP:=/bin/false}"
 : "${xBTRFS:=/bin/false}"
-: "${xLVS:=/bin/false}"
-readonly xTAR xDUMP xBTRFS xLVS xMOUNT xUMOUNT xMKDIR
+readonly xTAR xDUMP xBTRFS xMOUNT xUMOUNT xMKDIR
 
 # Common mount-options
 declare -r MOUNTOPTS="noexec,nosuid,nodev"
@@ -156,17 +155,58 @@ _btrfs_snapshot() {
 # - turn it into a PV, and extend the proper VG over it;
 # - make a snapshot of the proper LV.
 #
-# Input: $1 = device
+# Input: $1 = mode of operation (create/destroy)
+#	$2 = device
 _lvm_snapshot() {
-	local dev="$1" lv vg
+	local dev="$2" lv vg loop_img loop_dev snap_name x
 
 	# Get LV and VG names for the device "$dev"
 	read -r lv vg < \
-		<($xLVS --noheadings -o lvname,vgname "$device")
+		<(/usr/sbin/lvs --noheadings -o lvname,vgname "$dev")
+	snap_name="backup-snapshot-${vg}_${lv}-$SFX"
 
-	# 
+	# Create the auxiliary loop dev
+	loop_img="/dev/shm/${snap_name}.img"
+	if [[ -f "$loop_img" ]]; then
+		IFS=":" read -r loop_dev x < \
+			<(/usr/sbin/losetup -j "$loop_img")
+	else
+		_tee /usr/bin/dd if=/dev/zero of="$loop_img" bs=500M count=1
+		loop_dev="$(/usr/sbin/losetup --show -f "$loop_img")"
+	fi
 
-	echo -nE "$lv"
+	# We are done and want to destroy the snapshot
+	if [[ "x$1" == "xdestroy" ]]; then
+		echo -E "+++ Dismantling LVM snapshot \"${vg}/${snap_name}\"..." 1>&2
+		_tee /usr/sbin/lvremove -v -y "${vg}/$snap_name"
+		_tee /usr/sbin/vgreduce -v -y "$vg" "$loop_dev"
+		_tee /usr/sbin/pvremove -v -y "$loop_dev"
+		_tee /usr/sbin/losetup -d "$loop_dev"
+		_tee /usr/bin/rm -vf "$loop_img"
+
+		echo -E "--- LVM snapshot destroyed" 1>&2
+
+		return 0
+	fi
+
+	# Check that we want to create the snapshot (and abort otherwise)
+	if [[ "x$1" != "xcreate" ]]; then
+		echo -E "_lvm_snapshot(): $1 can be only \"create\" or \"destroy\""
+		exit 1
+	fi
+	echo -E "+++ Making and mounting LVM snapshot..." 1>&2
+
+	# Initialize "$loop_dev" as a PV and include it into "$vg"
+	_tee /usr/sbin/pvcreate -v -y "$loop_dev"
+	_tee /usr/sbin/vgextend -v -y "$vg" "$loop_dev"
+
+	# Create and mount the snapshot
+	_tee /usr/sbin/lvcreate -v -y -p r -l "100%PVS" -n "$snap_name" \
+		-s "${vg}/$lv" "$loop_dev"
+	_tee $xMOUNT -v -o "ro,${MOUNTOPTS}" "/dev/${vg}/$snap_name" "$SRC_MNT"
+
+	echo -E "--- LVM snapshot \"${vg}/${snap_name}\" mounted at \"${SRC_MNT}\""
+	return 0
 }
 
 #
@@ -272,6 +312,15 @@ _rnd_alnum() {
 	echo -nE "$s"
 }
 
+#
+# A tee-like function to echo a command before executing it.
+#
+# Input: command
+_tee() {
+	echo -E "~~>  $@" 
+	"$@"
+} 1>&2
+
 _usage() {
 	echo ""
 	echo "Usage: td-snapshot.sh [-t tar|dump] -p <path>"
@@ -347,7 +396,7 @@ IFS="#" read -r filesystem device rel_path subvol_id <<< \
 #   (if we have a basic device), no snapshotting will be done.
 if [[ "$filesystem" == "btrfs" ]]; then
 	snap_type="btrfs"
-elif $xLVS "$device" &> /dev/null; then
+elif /usr/sbin/lvs "$device" &> /dev/null; then
 	snap_type="lvm"
 else
 	snap_type="none"
@@ -365,9 +414,9 @@ echo -E "Snapshots: $snap_type"
 echo ""
 
 # Create a shapshot
-subvol_name="$("_${snap_type}_snapshot" "$device" "$subvol_id")"
+subvol_name="$("_${snap_type}_snapshot" "create" "$device" "$subvol_id")"
 if [[ -n "$subvol_name" ]]; then
-	rel_path="${SRC_MNT}/${rel_path#/${subvol_name}/}"
+	rel_path="${SRC_MNT}/${rel_path#/${subvol_name}}"
 else
 	rel_path="${SRC_MNT}/${rel_path#/}"
 fi
