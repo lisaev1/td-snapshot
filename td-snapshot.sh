@@ -291,7 +291,7 @@ _sanitize_filename() {
 	f="${f%/}"
 	[[ "x${f#-}" == "x$f" ]] || f="./$f"
 	[[ "x${f##*/}" == "x$f" ]] && f="./$f"
-	echo -nE "$(/usr/bin/readlink -f "$f")"
+	echo -nE "$(/usr/bin/realpath "$f")"
 }
 
 #
