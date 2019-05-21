@@ -569,6 +569,7 @@ declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
 	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf SNAPSHOT_FILE backup_name \
 	STORAGE_DIR STATE_FILE
 declare -i lev
+declare -a state_data
 
 # Handle the arguments
 while getopts "t:p:n:h" arg; do
@@ -780,12 +781,24 @@ if [[ "$backend" == "tar" ]]; then
 fi
 readonly SNAPSHOT_FILE
 
-# Do backup and update the state file with the new record
+# Do backup, verify it and update the state file with the new record
 echo -E "Starting ${backend^^} level $lev snapshot..."
-echo -E \
-"$ID ${backend:0:1} $lev $UTC_TS $("_${backend}_backup" "$lev" "$rel_path")">>\
-"$STATE_FILE"
-echo -E "${backend^^} snapshot ready!"
+read -ra state_data <<< \
+   "$ID ${backend:0:1} $lev $UTC_TS $("_${backend}_backup" "$lev" "$rel_path")"
+
+echo -E "Verifying the archive..."
+b_sf="${STORAGE_DIR}/0/${state_data[-1]}"
+if echo -nE "${state_data[-2]}  $b_sf" | $xSHA -c -; then
+	echo -E "${state_data[@]}" >> "$STATE_FILE"
+
+	echo -E "${backend^^} snapshot ready!"
+	echo -E "File: ${state_data[-1]}"
+	echo -E "Checksum: ${state_data[-2]}"
+else
+	echo -E "VERIFICATION FAILED!!!"
+	echo -E "Removing archive and aborting..."
+	_tee $xRM -v -- "$b_sf"
+fi
 
 # Cleanup the snapshots, umount storage and delete mountpoints
 echo -E "!!! Cleanup !!!"
