@@ -32,15 +32,11 @@ declare -r STORAGE_NFS="taupo.colorado.edu:/export/backup"
 # Quasi-random salt
 declare -r SALT="$(< /etc/machine-id)"
 
-# Frequently used commands... ALl systems are expected to have tar, mount,
-# umount and mkdir, but not necessarily btrfs, dump or lvs. If they are not
-# present, we replace them with /bin/false to fail subsequent checks.
+# Frequently used commands
 declare xTAR="$(type -pf tar)" xDUMP="$(type -pf dump)" \
 	xBTRFS="$(type -pf btrfs)" \
 	xMOUNT="$(type -pf mount)" xUMOUNT="$(type -pf umount)" \
 	xMKDIR="$(type -pf mkdir)"
-: "${xDUMP:=/bin/false}"
-: "${xBTRFS:=/bin/false}"
 readonly xTAR xDUMP xBTRFS xMOUNT xUMOUNT xMKDIR
 
 # Common mount-options
@@ -304,38 +300,50 @@ _initial_metadata_setup() {
 #
 # Determine state of the backup routine by reading "${METADATA_DIR}/state" if
 # present. The state file has a space/tab-separated (dump-like) format:
-# <ID> <level> <UTC timestamp> <sha256sum of the backup> <filename of archive>
+# <ID> <tar/dump backend> <level> <UTC timestamp> <sha256sum of backup>
+# <filename of the backup archive>
 # For example:
-# 2312f5635ef572c 0 1543961163 <sha256sum> <fn>
-# 2312f5635ef572c 1 1543981163 <sha256sum> <fn>
-# 2312f5635ef572c 2 1543981180 <sha256sum> <fn>
+# 2312f5635ef572c t 0 1543961163 <sha256sum> <fn>
+# 2312f5635ef572c t 1 1543981163 <sha256sum> <fn>
+# 2312f5635ef572c t 2 1543981180 <sha256sum> <fn>
 # ...
+# Clearly, the backend shouldn't change within a cycle, but it can be different
+# for different cycles.
 #
 # Output: A set of strings separated by "#":
 #	id = backup ID (either generated or read from the state file);
 #	lev = level of the backup to continue with (special value -1 means that
-#		a new cycle will start at level 0).
+#		a new cycle will start at level 0);
+#	b = "tar" or "dump" backend used to take prev snapshot.
 _read_state() {
-	local id x s
+	local id x s b
 	local -i lev n
 
 	echo -E "+++ Parsing the state file at \"${STATE_FILE}\"..." 1>&2
 	if [[ -f "$STATE_FILE" ]]; then
 		n=0
-		while read -r id lev x s; do
+		while read -r id b lev x s; do
 			(( ++n ))
 		done < "$STATE_FILE"
+		if [[ "$b" == "t" ]]; then
+			b="tar"
+		else
+			b="dump"
+		fi
 
 		x="$(/usr/bin/date -d "@$x")"
-		{echo -E "... Current cycle ID is \"${id}\". The last backup"
-		 echo -E "... at level $lev was taken on ${x}."
+		{echo -E "... Current cycle ID is \"${id}\". The last backup at"
+		 echo -E "... level $lev was taken on ${x} using ${b}."
 	 	} 1>&2
 
 		if (( n >= CYCLE_LENGTH )); then
-			# We need to start a new cycle. The special value
-			# lev = -1 indicates rotation of backups.
+			# We need to start a new cycle (with a new ID). The
+			# special value lev = -1 indicates rotation of backups.
+			# We also unset the backend variable to cover cases
+			# when a user wants to switch backend in the new cycle.
 			id="$(_rnd_alnum 15)"
 			(( lev = -1 ))
+			b=""
 
 			echo -E "... Present cycle ended, starting a new one" 1>&2
 		elif (( lev >= MAX_LEV )); then
@@ -363,7 +371,7 @@ _read_state() {
 	fi
 	echo -E "--- Finished reading state file." 1>&2
 
-	echo -nE "${id}#${lev}"
+	echo -nE "${id}#${lev}#$b"
 }
 
 #
@@ -401,6 +409,19 @@ _rotate_backups() {
 
 	echo -E "--- Backup rotation done."
 }
+
+#
+# Incremental backup function using TAR.
+#
+#_tar_backup() {
+#	local lev="$1" path="$2"
+#}
+
+#
+# Incremental backup function using DUMP.
+#
+#_dump_backup() {
+#}
 
 #
 # Sanitize paths
@@ -503,7 +524,7 @@ _usage() {
 
 # Declare veriables just to keep track of them
 declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
-	subvol_name ID SFX SRC_MNT STORAGE_MNT
+	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf
 declare -i lev
 
 # Handle the arguments
@@ -527,7 +548,6 @@ while getopts "t:p:h" arg; do
 			exit 0
 		;;
 	esac
-
 done
 
 # Abort if no "-p" option was provided
@@ -552,7 +572,7 @@ readonly SRC_MNT="/dev/shm/backup-$lev" \
 	STORAGE_MNT="/dev/shm/storage-$lev"
 
 # Read the state file
-IFS="#" read -r ID lev <<< "$(_read_state)"
+IFS="#" read -r ID lev b_sf <<< "$(_read_state)"
 readonly ID
 
 # Create the mountpoints and mount the storage
@@ -606,6 +626,12 @@ else
 	snap_type="none"
 fi
 
+# Check that btrfs-progs is installed
+if [[ (-z "$xBTRFS") && ("$snap_type" == "btrfs") ]]; then
+	echo -E "Can't use btrfs snapshots because \"btrfs-progs\" is not installed!"
+	exit 1
+fi
+
 # Set up more global constants:
 #	UTC_TS = Timestamp of this backup
 # 	SFX = common unique suffix for dir names
@@ -632,3 +658,25 @@ else
 	rel_path="${SRC_MNT}/${rel_path#/}"
 fi
 rel_path="${rel_path}/${dir#${mnt_point}}"
+
+#
+# Decide whether we want to use tar or dump
+#
+
+# If the previous backup used a particular backend (stored in "$b_sf"), then we
+# ignore the backend specified via the "-t" cmdline switch. If "$b_sf" is null,
+# we take the cmdline argument or set a default value for "$backend".
+# We use dump only when (1) the script is run against a mountpoint, (2) the
+# filesystem is ext2/3/4, and (3) dump is installed. If these conditions are
+# met, dump is the default backend. Otherwise, we use tar.
+if [[ -z "$b_sf" ]]; then
+	if [[ ("$(/usr/bin/realpath "$rel_path")" == "$SRC_MNT") && \
+		("$filesystem" =~ ^ext[2-4]$) && (-n "$xDUMP") ]]; then
+		: "${backend:="dump"}"
+	else
+		backend="tar"
+	fi
+else
+	backend="$b_sf"
+fi
+echo -E "Using the $backend backend..."
