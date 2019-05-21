@@ -111,39 +111,61 @@ _btrfs_idname() {
 #
 # Make & mount ro snapshot when the backup target is on btrfs
 #
-# Input: $1 = device
-# 	$2 = subvolid
+# Input: $1 = mode of operation (create/destroy)
+#	$2 = device
+# 	$3 = subvolid
 # Return: ID of the snapshot
 _btrfs_snapshot() {
-	local dev="$1" subvolid="$2" name
+	local mode="$1" dev="$2" subvolid="$3" snap_name name snap_id
 	local -r snap_dir="_${SALT}_backup_snapshots"
-
-	echo -E "+++ Making and mounting btrfs snapshot..." 1>&2
-
-	# Mount the entire BTRFS device "$dev"
-	$xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT" 1>&2
 
 	# For our subvolid (!= 5), find the corresponding name. The
 	# subvolid = 5 does not show up in the list and "$name" is unset.
 	[[ "$subvolid" != "5" ]] && \
 		name="$(_btrfs_idname "name" "$subvolid" "$SRC_MNT")"
+	snap_name="backup-snapshot-${name:-"id5"}-$SFX"
 
 	# If necessary, make a subvolume for future snapshots
 	[[ ! -d "${SRC_MNT}/$snap_dir" ]] && \
-		$xBTRFS subvolume create "${SRC_MNT}/$snap_dir" 1>&2
+		_tee $xBTRFS subvolume create "${SRC_MNT}/$snap_dir"
+
+	# We are done and want to destroy the snapshot
+	if [[ "x$mode" == "xdestroy" ]]; then
+		echo -E "+++ Dismantling BTRFS snapshot \"${snap_name}\"..."
+
+		# Remember that after calling "_btrfs_snapshot create",
+		# "$SRC_MNT" is a mountpoint for the *snapshot*, so we umount
+		# it first, then mount the full device and delete the snapshot.
+		_tee $xUMOUNT -v "$SRC_MNT"
+		_tee $xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT"
+		_tee $xBTRFS subvolume delete -C \
+			"${SRC_MNT}/${snap_dir}/$snap_name"
+		_tee $xUMOUNT -v "$SRC_MNT"
+		echo -E "--- BTRFS snapshot destroyed"
+
+		return 0
+	fi
+
+	# Check that we want to create the snapshot (and abort otherwise)
+	if [[ "x$mode" != "xcreate" ]]; then
+		echo -E "_btrfs_snapshot(): $mode can be only \"create\" or \"destroy\""
+		exit 1
+	fi
+	echo -E "+++ Making and mounting btrfs snapshot..." 1>&2
+
+	# Mount the entire BTRFS device "$dev"
+	_tee $xMOUNT -v -o "${MOUNTOPTS},subvolid=5" "$dev" "$SRC_MNT"
 
 	# Snapshot our parent subvolume and mount it ro
-	subvolid="backup-snapshot-${name:-"id5"}-$SFX"
-	$xBTRFS subvolume snapshot -r "${SRC_MNT}/$name" \
-		"${SRC_MNT}/${snap_dir}/$subvolid" 1>&2
+	_tee $xBTRFS subvolume snapshot -r "${SRC_MNT}/$name" \
+		"${SRC_MNT}/${snap_dir}/$snap_name"
+	snap_id="$(_btrfs_idname "id" "$snap_name" "$SRC_MNT")"
 
-	# Mount the snapshot (by its ID)
-	subvolid="$(_btrfs_idname "id" "$subvolid" "$SRC_MNT")"
-	$xUMOUNT -v "$SRC_MNT" 1>&2
-	$xMOUNT -v -o "ro,${MOUNTOPTS},subvolid=$subvolid" "$dev" \
-		"$SRC_MNT" 1>&2
+	_tee $xUMOUNT -v "$SRC_MNT"
+	_tee $xMOUNT -v -o "ro,${MOUNTOPTS},subvolid=$snap_id" "$dev" \
+		"$SRC_MNT"
 
-	echo -E "--- snapshot ID $subvolid mounted at $SRC_MNT" 1>&2
+	echo -E "--- snapshot ID $snap_id mounted at $SRC_MNT" 1>&2
 	echo -nE "$name"
 }
 
@@ -158,7 +180,7 @@ _btrfs_snapshot() {
 # Input: $1 = mode of operation (create/destroy)
 #	$2 = device
 _lvm_snapshot() {
-	local dev="$2" lv vg loop_img loop_dev snap_name x
+	local mode="$1" dev="$2" lv vg loop_img loop_dev snap_name x
 
 	# Get LV and VG names for the device "$dev"
 	read -r lv vg < \
@@ -176,8 +198,9 @@ _lvm_snapshot() {
 	fi
 
 	# We are done and want to destroy the snapshot
-	if [[ "x$1" == "xdestroy" ]]; then
+	if [[ "x$mode" == "xdestroy" ]]; then
 		echo -E "+++ Dismantling LVM snapshot \"${vg}/${snap_name}\"..." 1>&2
+		_tee $xUMOUNT -v "$SRC_MNT"
 		_tee /usr/sbin/lvremove -v -y "${vg}/$snap_name"
 		_tee /usr/sbin/vgreduce -v -y "$vg" "$loop_dev"
 		_tee /usr/sbin/pvremove -v -y "$loop_dev"
@@ -190,8 +213,8 @@ _lvm_snapshot() {
 	fi
 
 	# Check that we want to create the snapshot (and abort otherwise)
-	if [[ "x$1" != "xcreate" ]]; then
-		echo -E "_lvm_snapshot(): $1 can be only \"create\" or \"destroy\""
+	if [[ "x$mode" != "xcreate" ]]; then
+		echo -E "_lvm_snapshot(): $mode can be only \"create\" or \"destroy\""
 		exit 1
 	fi
 	echo -E "+++ Making and mounting LVM snapshot..." 1>&2
@@ -395,11 +418,9 @@ IFS="#" read -r filesystem device rel_path subvol_id <<< \
 #   mountpoint for) a logical volume and, if yes, use LVM snapshots. Otherwise
 #   (if we have a basic device), no snapshotting will be done.
 if [[ "$filesystem" == "btrfs" ]]; then
-	snap_type="btrfs"
+	snap_type="btrfs_snapshot"
 elif /usr/sbin/lvs "$device" &> /dev/null; then
-	snap_type="lvm"
-else
-	snap_type="none"
+	snap_type="lvm_snapshot"
 fi
 
 # Print status
@@ -414,7 +435,7 @@ echo -E "Snapshots: $snap_type"
 echo ""
 
 # Create a shapshot
-subvol_name="$("_${snap_type}_snapshot" "create" "$device" "$subvol_id")"
+subvol_name="$("_${snap_type:-:}" "create" "$device" "$subvol_id")"
 if [[ -n "$subvol_name" ]]; then
 	rel_path="${SRC_MNT}/${rel_path#/${subvol_name}}"
 else
