@@ -54,8 +54,8 @@ declare -r STATE_FILE="${METADATA_DIR}/state"
 # See "filesystems/proc.txt" in kernel docs for the format spec
 declare -r MOUNTINFO="/proc/self/mountinfo"
 
-# Timestamp of this backup
-declare -r UTC_TS="$(/usr/bin/date "+%s")"
+# Short hostname of the machine
+declare -r HOST="${HOSTNAME%%.*}"
 
 # -----------------------------------------------------------------------------
 # Functions
@@ -291,9 +291,9 @@ _initial_metadata_setup() {
 			"$(_mnt2info "$(_closest_mountpoint /var/lib)")"
 
 		if [[ "$fs" == "btrfs" ]]; then
-			$xBTRFS subvolume create "$METADATA_DIR"
+			_tee $xBTRFS subvolume create "$METADATA_DIR"
 		else
-			$xMKDIR -v "$METADATA_DIR"
+			_tee $xMKDIR -v "$METADATA_DIR"
 		fi
 	fi
 
@@ -326,7 +326,9 @@ _read_state() {
 			(( ++n ))
 		done < "$STATE_FILE"
 
-		echo -E "     Current cycle ID is \"${id}\". The last backup at level $lev was taken on ${x}." 1>&2
+		{echo -E "... Current cycle ID is \"${id}\". The last backup"
+		 echo -E "... at level $lev was taken on ${x}."
+	 	} 1>&2
 
 		if (( n >= CYCLE_LENGTH )); then
 			# We need to start a new cycle. The special value
@@ -334,19 +336,19 @@ _read_state() {
 			id="$(_rnd_alnum 15)"
 			(( lev = -1 ))
 
-			echo -E "     Present cycle ended -- starting a new one." 1>&2
+			echo -E "... Present cycle ended, starting a new one" 1>&2
 		elif (( lev >= MAX_LEV )); then
 			# We reached the max level and return back to level 1.
 			# The ID is the same as the last backup.
 			lev=1
 
-			echo -E "     Max level reached -- continuing the cycle with level 1" 1>&2
+			echo -E "... Max level reached, proceeding with lev 1" 1>&2
 		else
 			# Otherwise, just increment the last level value,
 			# keeping the same ID.
 			(( ++lev ))
 
-			echo -E "     Continuing this cycle with level ${lev} ." 1>&2
+			echo -E "... Continuing cycle with lev ${lev}" 1>&2
 		fi
 	else
 		# If the state file doesn't exist, we start fresh (lev is set
@@ -356,11 +358,47 @@ _read_state() {
 		id="$(_rnd_alnum 15)"
 		(( lev = -1 ))
 
-		echo -E "     State file is missing. Starting a new cycle with ID = $id ." 1>&2
+		echo -E "... State file not found. Starting a new cycle with ID = $id ." 1>&2
 	fi
 	echo -E "--- Finished reading state file." 1>&2
 
 	echo -nE "${id}#${lev}"
+}
+
+#
+# Rotate backups on the server. The backup directory structure (starting from
+# the storage mountpoint):
+# /storage
+# |
+# |-- host1/
+# |   |-- 0/
+# |   |-- 1/
+# |   ...
+# |   `-- MAX_CYCLES/
+# |-- host2/
+# ...
+#
+_rotate_backups() {
+	local d x
+	local -i i
+
+	echo -E "+++ Rotating backups..."
+
+	d="${STORAGE_MNT}/${HOST}/$MAX_CYCLES"
+	if [[ -d "$d" ]]; then
+		echo -E "... Removing backup with number $MAX_CYCLES (= max)"
+		_tee /usr/bin/rm -vr -- "$d"
+	fi
+
+	d="${STORAGE_MNT}/${HOST}"
+	for (( i = MAX_CYCLES - 1; i >= 0; --i )); do
+		x="${d}/$i"
+		[[ -d "$x" ]] && \
+			_tee /usr/bin/mv -v -- "$x" "${d}/$(( i + 1 ))"
+	done
+	_tee $xMKDIR -v "${d}/0"
+
+	echo -E "--- Backup rotation done."
 }
 
 #
@@ -464,7 +502,8 @@ _usage() {
 
 # Declare veriables just to keep track of them
 declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
-	subvol_name lev ID SFX SRC_MNT STORAGE_MNT
+	subvol_name ID SFX SRC_MNT STORAGE_MNT
+declare -i lev
 
 # Handle the arguments
 while getopts "t:p:h" arg; do
@@ -504,27 +543,36 @@ fi
 # Do some initial checks and setup the metadata directory
 _initial_metadata_setup
 
-# Read the state file
-IFS="#" read -r ID lev <<< "$(_read_state)"
-
 # Set up more global constants:
-# 	SFX = common unique suffix for dir names
 #	SRC_MNT = mountpoint for the dir to be backed up
 #	STORAGE_MNT = mountpoint for the backup storage
-SFX="${UTC_TS}-$ID"
-SRC_MNT="/dev/shm/backup-$SFX"
-STORAGE_MNT="/dev/shm/storage-$SFX"
-readonly ID SFX SRC_MNT STORAGE_MNT
+lev="$(_rnd_alnum 15)"
+readonly SRC_MNT="/dev/shm/backup-$lev" \
+	STORAGE_MNT="/dev/shm/storage-$lev"
+
+# Read the state file
+IFS="#" read -r ID lev <<< "$(_read_state)"
+readonly ID
 
 # Create the mountpoints and mount the storage
-$xMKDIR -v "$SRC_MNT" "$STORAGE_MNT"
-$xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
+_tee $xMKDIR -v "$SRC_MNT" "$STORAGE_MNT"
+_tee $xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
 
 #
 # Backup logic
 #
 
-
+# If the storage is fresh and we don't have the proper dir tree, we create the
+# directory for the current cycle. Otherwise, we check if "$lev" == -1 and
+# unconditionally rotate backups if yes.
+if [[ ! -d "${STORAGE_MNT}/${HOST}/0" ]]; then
+	_tee $xMKDIR -vp "${STORAGE_MNT}/${HOST}/0"
+else
+	if (( lev == -1 )); then
+		_rotate_backups
+		lev=0
+	fi
+fi
 
 #
 # Snapshotting logic
@@ -550,10 +598,17 @@ else
 	snap_type="none"
 fi
 
+# Set up more global constants:
+#	UTC_TS = Timestamp of this backup
+# 	SFX = common unique suffix for dir names
+readonly UTC_TS="$(/usr/bin/date "+%s")" \
+	SFX="${UTC_TS}-$ID"
+
 # Print status
-echo -E "Timestamp: $UTC_TS"
-echo -E "ID: $ID"
+echo -E "Timestamp / ID: $UTC_TS / $ID"
+echo -E "Host: $HOST"
 echo -E "Backup target: \"${dir}\""
+echo -E "Level: $lev"
 [[ "$subvol_id" != "0" ]] && echo -E "Parent subvolume ID: $subvol_id"
 echo -E "Closest mountpoint: \"${mnt_point}\""
 echo -E "Path within parent device: \"${rel_path}\""
