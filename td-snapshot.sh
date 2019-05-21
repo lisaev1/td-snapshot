@@ -337,6 +337,7 @@ _read_state() {
 	local -i lev n
 	local -a a
 
+	b=""
 	echo -E "+++ Parsing the state file at \"${STATE_FILE}\"..." 1>&2
 	if [[ -f "$STATE_FILE" ]]; then
 		n=0
@@ -363,7 +364,6 @@ _read_state() {
 			# when a user wants to switch backend in the new cycle.
 			id="$(_rnd_alnum 15)"
 			(( lev = -1 ))
-			b=""
 
 			echo -E "... Present cycle ended, starting a new one" 1>&2
 		elif (( lev >= MAX_LEV )); then
@@ -829,8 +829,7 @@ read -ra state_data <<< \
 
 b_sf="${STORAGE_DIR}/0/${state_data[-1]}"
 if [[ "${state_data[-2]}" == "$ID" ]]; then
-	echo -E "Creating archive using ${backend^^} FAILED!!!"
-	echo -E "Removing archive and aborting..."
+	echo -E "Creating archive using ${backend^^} FAILED!!! Cleaning up..."
 	_tee $xRM -v -- "$b_sf"
 else
 	echo -E "Verifying the archive..."
