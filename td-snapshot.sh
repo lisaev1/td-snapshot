@@ -199,7 +199,7 @@ _lvm_snapshot() {
 
 	# We are done and want to destroy the snapshot
 	if [[ "x$mode" == "xdestroy" ]]; then
-		echo -E "+++ Dismantling LVM snapshot \"${vg}/${snap_name}\"..." 1>&2
+		echo -E "+++ Dismantling LVM snapshot \"${vg}/${snap_name}\"..."
 		_tee $xUMOUNT -v "$SRC_MNT"
 		_tee /usr/sbin/lvremove -v -y "${vg}/$snap_name"
 		_tee /usr/sbin/vgreduce -v -y "$vg" "$loop_dev"
@@ -207,7 +207,7 @@ _lvm_snapshot() {
 		_tee /usr/sbin/losetup -d "$loop_dev"
 		_tee /usr/bin/rm -vf "$loop_img"
 
-		echo -E "--- LVM snapshot destroyed" 1>&2
+		echo -E "--- LVM snapshot destroyed"
 
 		return 0
 	fi
@@ -228,7 +228,37 @@ _lvm_snapshot() {
 		-s "${vg}/$lv" "$loop_dev"
 	_tee $xMOUNT -v -o "ro,${MOUNTOPTS}" "/dev/${vg}/$snap_name" "$SRC_MNT"
 
-	echo -E "--- LVM snapshot \"${vg}/${snap_name}\" mounted at \"${SRC_MNT}\""
+	echo -E "--- LVM snapshot \"${vg}/${snap_name}\" mounted at \"${SRC_MNT}\"" 1>&2
+	return 0
+}
+
+#
+# A trivial function to make a "snapshot" of the backup target when it resides
+# neither on a btrfs filesystem or an LV. In this case, the snapshot is simply
+# a ro mount of the original device.
+#
+# Input: $1 = mode of operation (create/destroy)
+#	$2 = device
+_none_snapshot() {
+	local mode="$1" dev="$2"
+
+	if [[ "x$mode" == "xdestroy" ]]; then
+		echo -E "+++ Dismantling the ro mount at \"${SRC_MNT}\"..."
+		_tee $xUMOUNT -v "$SRC_MNT"
+		echo -E "--- $SRC_MNT unmounted"
+		return 0
+	fi
+
+	# Check that we want to create the snapshot (and abort otherwise)
+	if [[ "x$mode" != "xcreate" ]]; then
+		echo -E "_none_snapshot(): $mode can be only \"create\" or \"destroy\""
+		exit 1
+	fi
+
+	echo -E "+++ Mounting ro the backup target..." 1>&2
+	_tee $xMOUNT -v -o "ro,${MOUNTOPTS}" "$dev" "$SRC_MNT"
+	echo -E "--- Backup target is mounted at \"${SRC_MNT}\"" 1>&2
+
 	return 0
 }
 
@@ -418,9 +448,11 @@ IFS="#" read -r filesystem device rel_path subvol_id <<< \
 #   mountpoint for) a logical volume and, if yes, use LVM snapshots. Otherwise
 #   (if we have a basic device), no snapshotting will be done.
 if [[ "$filesystem" == "btrfs" ]]; then
-	snap_type="btrfs_snapshot"
+	snap_type="btrfs"
 elif /usr/sbin/lvs "$device" &> /dev/null; then
-	snap_type="lvm_snapshot"
+	snap_type="lvm"
+else
+	snap_type="none"
 fi
 
 # Print status
@@ -435,7 +467,7 @@ echo -E "Snapshots: $snap_type"
 echo ""
 
 # Create a shapshot
-subvol_name="$("_${snap_type:-:}" "create" "$device" "$subvol_id")"
+subvol_name="$("_${snap_type}_snapshot" "create" "$device" "$subvol_id")"
 if [[ -n "$subvol_name" ]]; then
 	rel_path="${SRC_MNT}/${rel_path#/${subvol_name}}"
 else
