@@ -642,9 +642,11 @@ readonly ID
 _metadata_cleanup "$backup_name"
 
 # Create the mountpoints and mount the storage
-_tee $xMKDIR -v "$SRC_MNT" "$STORAGE_MNT"
-[[ "$HOSTNAME" != "$NFS_HOST" ]] && \
+_tee $xMKDIR -v "$SRC_MNT"
+if [[ "$HOSTNAME" != "$NFS_HOST" ]]; then
+	_tee $xMKDIR -v "$STORAGE_MNT"
 	_tee $xMOUNT -v -t nfs4 "$STORAGE_NFS" "$STORAGE_MNT"
+fi
 
 #
 # Backup logic
