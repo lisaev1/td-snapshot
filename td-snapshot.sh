@@ -1,7 +1,6 @@
 #!/bin/bash
 
 export LC_ALL=C
-set -o errexit
 #set -o xtrace
 
 # -----------------------------------------------------------------------------
@@ -30,12 +29,31 @@ declare -r STORAGE_NFS="${NFS_HOST}:/export/backup"
 # Global constants
 # -----------------------------------------------------------------------------
 
+# Set a reasonable $PATH variable (e.g. cron has PATH="/usr/bin:/bin")
+export PATH="/usr/bin:/usr/sbin"
+
 # Frequently used commands
-declare -r xDUMP="$(type -pf dump)" xRM="/usr/bin/rm" xTEE="$(type -pf tee)" \
-	xBTRFS="$(type -pf btrfs)" xMKDIR="$(type -pf mkdir)" \
-	xMOUNT="$(type -pf mount)" xUMOUNT="$(type -pf umount)" \
-	xREALPATH="$(type -pf realpath)" xSHA="$(type -pf sha256sum)" \
-	xCP="$(type -pf cp)"
+declare -a cmd=()
+declare t c s=""
+
+for c in dump rm tee btrfs mkdir mount umount realpath sha256sum cp; do
+	t="$(type -Pf "$c")"
+	cmd+=("${t:-/bin/false}")
+	[[ "$c" != "sha256sum" ]] && s+="x${c^^} " || s+="xSHA "
+done
+
+s="${s% }"
+read -r $s <<< "${cmd[@]}"
+readonly $s
+
+echo -E "Commands used in this script:"
+for c in $s; do
+	echo -E "$c -> ${!c}"
+done
+unset -v t s c cmd
+
+# Now use the set -e "protection"
+set -o errexit
 
 # Common mount-options
 declare -r MOUNTOPTS="noexec,nosuid,nodev"
