@@ -33,14 +33,14 @@ declare -r STORAGE_NFS="taupo.colorado.edu:/export/backup"
 declare -r xDUMP="$(type -pf dump)" xRM="/usr/bin/rm" xTEE="$(type -pf tee)" \
 	xBTRFS="$(type -pf btrfs)" xMKDIR="$(type -pf mkdir)" \
 	xMOUNT="$(type -pf mount)" xUMOUNT="$(type -pf umount)" \
-	xREALPATH="$(type -pf realpath)" xSHA="$(type -pf sha256sum)"
+	xREALPATH="$(type -pf realpath)" xSHA="$(type -pf sha256sum)" \
+	xCP="$(type -pf cp)"
 
 # Common mount-options
 declare -r MOUNTOPTS="noexec,nosuid,nodev"
 
 # Meta data directory
 declare -r METADATA_DIR="/var/lib/td-backup"
-declare -r STATE_FILE="${METADATA_DIR}/state"
 
 # Info about mounted filesystems
 # See "filesystems/proc.txt" in kernel docs for the format spec
@@ -424,7 +424,7 @@ _metadata_cleanup() {
 }
 
 #
-# Incremental backup function using TAR
+# Incremental backup function using TAR/DUMP
 #
 # Input: $1 = level of this backup
 #	$2 = path to compress ($rel_path)
@@ -433,7 +433,7 @@ _metadata_cleanup() {
 _tar_backup() {
 	local lev="$1" path="$2" d cs
 
-	(( lev )) && _tee /usr/bin/cp -v -- \
+	(( lev )) && _tee $xCP -v -- \
 		"${METADATA_DIR}/tar-db-${ID}.$(( lev - 1 ))" "$SNAPSHOT_FILE"
 
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
@@ -441,14 +441,18 @@ _tar_backup() {
 	      --listed-incremental="$SNAPSHOT_FILE" -f - -C "$path" . | \
 	      $xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.tar.bz2" | $xSHA -)
 
-	echo -nE "$cs  ${SFX}.lev${lev}.${d}.tar.bz2"
+	echo -nE "$cs ${SFX}.lev${lev}.${d}.tar.bz2"
 }
 
-#
-# Incremental backup function using DUMP.
-#
-#_dump_backup() {
-#}
+_dump_backup() {
+	local lev="$1" path="$2" d cs
+
+	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
+	read -r cs < <($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" |\
+	      $xTEE "${STORAGE_DIR}/0/${SFX}.lev${lev}.${d}.dump.gz" | $xSHA -)
+
+	echo -nE "$cs ${SFX}.lev${lev}.${d}.dump.gz"
+}
 
 #
 # Sanitize paths
@@ -555,7 +559,7 @@ _usage() {
 # Declare veriables just to keep track of them
 declare backend dir mnt_point filesystem device rel_path subvol_id snap_type \
 	subvol_name ID SFX SRC_MNT STORAGE_MNT b_sf SNAPSHOT_FILE backup_name \
-	STORAGE_DIR
+	STORAGE_DIR STATE_FILE
 declare -i lev
 
 # Handle the arguments
@@ -609,10 +613,12 @@ _initial_metadata_setup
 #	SRC_MNT = mountpoint for the dir to be backed up
 #	STORAGE_MNT = mountpoint for the backup storage
 #	STORAGE_DIR = path to the actual backups (beneath $STORAGE_MNT)
+#	STATE_FILE = state file for this $backup_name
 lev="$(_rnd_alnum 15)"
 readonly SRC_MNT="/dev/shm/backup-$lev" \
 	STORAGE_MNT="/dev/shm/storage-$lev"
-readonly STORAGE_DIR="${STORAGE_MNT}/${HOST}/$backup_name"
+readonly STORAGE_DIR="${STORAGE_MNT}/${HOST}/$backup_name" \
+	STATE_FILE="${METADATA_DIR}/${backup_name}.state"
 
 # Read the state file
 IFS="#" read -r ID lev b_sf <<< "$(_read_state)"
@@ -764,5 +770,24 @@ if [[ "$backend" == "tar" ]]; then
 fi
 readonly SNAPSHOT_FILE
 
-# Do the backup
-"_${backend}_backup" "$lev" "$rel_path"
+# Do backup and update the state file with the new record
+echo -E "Starting ${backend^^} level $lev snapshot..."
+echo -E \
+"$ID ${backend:0:1} $lev $UTC_TS $("_${backend}_backup" "$lev" "$rel_path")">>\
+"$STATE_FILE"
+echo -E "${backend^^} snapshot ready!"
+
+# Save the state file and snapshot data to the backup host
+_tee $xCP -v -- "$STATE_FILE" "$SNAPSHOT_FILE" "$STORAGE_DIR/0/"
+
+# Cleanup the snapshots, umount storage and delete mountpoints
+echo -E "!!! Cleanup !!!"
+"_${snap_type}_snapshot" "destroy" "$device" "$subvol_id"
+
+echo ""
+echo -E "Unmounting storage..."
+_tee $xUMOUNT -v "$STORAGE_MNT"
+
+echo ""
+echo -E "Removing mountpoints..."
+_tee /usr/bin/rmdir -v "$SRC_MNT" "$STORAGE_MNT"
