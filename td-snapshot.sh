@@ -482,12 +482,14 @@ _dump_backup() {
 	# dump doesn't like changing device names (e.g. lvm snapshots whose
 	# names contain timestamps). Therefore, we hack SNAPSHOT_FILE to
 	# replace old snapshot names with the current one.
-	x="(.*)[0-9]{"${#UTC_TS}"}--${ID}(.*)"
-	cs="$(< "$SNAPSHOT_FILE")"
-	while read -r d; do
-		[[ "$d" =~ $x ]] && \
+	if [[ -f "$SNAPSHOT_FILE" ]]; then
+		x="(.*)[0-9]{"${#UTC_TS}"}--${ID}(.*)"
+		cs="$(< "$SNAPSHOT_FILE")"
+		while read -r d; do
+		   [[ "$d" =~ $x ]] && \
 		      echo -E "${BASH_REMATCH[1]}${SFX/-/--}${BASH_REMATCH[2]}"
-	done <<< "$cs" > "$SNAPSHOT_FILE"
+		done <<< "$cs" > "$SNAPSHOT_FILE"
+	fi
 
 	d="$(date -d "@$UTC_TS" "+%Y%m%d")"
 	if x="$($xDUMP -D"$SNAPSHOT_FILE" -"$lev" -u -z6 -f - "$path" | \
